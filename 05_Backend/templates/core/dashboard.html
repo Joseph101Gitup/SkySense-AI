@@ -1,0 +1,370 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="space-y-8 py-4">
+
+  <!-- ================================================================= -->
+  <!-- HEADER & QUICK ACTIONS -->
+  <!-- ================================================================= -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+    <div>
+      <div class="flex items-center gap-2 text-xs font-mono text-sky-400 mb-1">
+        <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span>TELEMETRY REGISTRY &bull; LIVE SQLITE DATABASE</span>
+      </div>
+      <h1 class="font-heading text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Meteorological Intelligence Dashboard</h1>
+      <p class="text-sm text-slate-400 mt-1">Real-time cloud classification telemetry, historical trends, and model confidence distributions.</p>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="flex items-center gap-3">
+      <!-- Quick Action: "Analyze New Image" -->
+      <a href="{% url 'predictions:predict' %}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm bg-gradient-to-r from-sky-500 to-indigo-600 text-white shadow-lg shadow-sky-500/25 hover:from-sky-400 hover:to-indigo-500 transition-all duration-200 hover:scale-[1.02]">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
+        </svg>
+        Analyze New Image
+      </a>
+      <a href="{% url 'predictions:history' %}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium text-sm glass-panel text-slate-300 hover:text-white transition">
+        <svg class="w-4 h-4 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        View History
+      </a>
+    </div>
+  </div>
+
+  <!-- ================================================================= -->
+  <!-- DYNAMIC KPI CARDS (TOTAL, TODAY, AVG CONFIDENCE, MOST RECENT) -->
+  <!-- ================================================================= -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+    
+    <!-- Card 1: TOTAL ANALYSES -->
+    <div class="glass-panel p-5 rounded-2xl relative overflow-hidden border border-slate-800 hover:border-slate-700 transition">
+      <div class="flex items-center justify-between">
+        <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Analyses</span>
+        <div class="w-8 h-8 rounded-lg bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+        </div>
+      </div>
+      <div class="font-heading text-3xl sm:text-4xl font-extrabold text-white mt-3 font-mono">
+        {{ total_analyses }}
+      </div>
+      <div class="text-xs text-slate-400 mt-1 flex items-center gap-1.5">
+        <span class="text-sky-400 font-medium">Recorded &bull;</span> All-time Inferences
+      </div>
+    </div>
+
+    <!-- Card 2: TODAY'S ANALYSES -->
+    <div class="glass-panel p-5 rounded-2xl relative overflow-hidden border border-slate-800 hover:border-slate-700 transition">
+      <div class="flex items-center justify-between">
+        <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Today's Analyses</span>
+        <div class="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        </div>
+      </div>
+      <div class="font-heading text-3xl sm:text-4xl font-extrabold text-white mt-3 font-mono">
+        {{ today_analyses }}
+      </div>
+      <div class="text-xs text-slate-400 mt-1 flex items-center gap-1.5">
+        <span class="text-indigo-400 font-medium">Logged &bull;</span> Current Calendar Day
+      </div>
+    </div>
+
+    <!-- Card 3: AVERAGE CONFIDENCE -->
+    <div class="glass-panel p-5 rounded-2xl relative overflow-hidden border border-slate-800 hover:border-slate-700 transition">
+      <div class="flex items-center justify-between">
+        <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Average Confidence</span>
+        <div class="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+      </div>
+      <div class="font-heading text-3xl sm:text-4xl font-extrabold text-white mt-3 font-mono">
+        {{ avg_conf_pct }}%
+      </div>
+      <div class="text-xs text-slate-400 mt-1 flex items-center gap-1.5">
+        <span class="text-emerald-400 font-medium">Softmax Mean &bull;</span> Model Certainty
+      </div>
+    </div>
+
+    <!-- Card 4: MOST RECENT PREDICTION -->
+    <div class="glass-panel p-5 rounded-2xl relative overflow-hidden border border-slate-800 hover:border-slate-700 transition">
+      <div class="flex items-center justify-between">
+        <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Most Recent Prediction</span>
+        <div class="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+      </div>
+      {% if most_recent %}
+        <div class="mt-3">
+          <a href="{% url 'predictions:result' most_recent.pk %}" class="font-heading text-base font-bold text-white hover:text-sky-400 transition block truncate" title="{{ most_recent.display_name }}">
+            {{ most_recent.display_name }}
+          </a>
+          <div class="text-xs text-slate-400 mt-1 flex items-center justify-between">
+            <span class="font-mono text-sky-400">{{ most_recent.confidence_percent }}%</span>
+            <span class="text-slate-500 font-mono">{{ most_recent.created_at|timesince }} ago</span>
+          </div>
+        </div>
+      {% else %}
+        <div class="font-heading text-base font-bold text-slate-500 mt-3">None Yet</div>
+        <div class="text-xs text-slate-500 mt-1">Awaiting first inference</div>
+      {% endif %}
+    </div>
+
+  </div>
+
+  <!-- ================================================================= -->
+  <!-- 3 CHARTS SECTION (CATEGORY DONUT, TIMELINE LINE, CONFIDENCE BARS) -->
+  <!-- ================================================================= -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    
+    <!-- Chart 1: Predictions by Rainfall Category (4 cols) -->
+    <div class="lg:col-span-4 glass-panel p-6 rounded-3xl space-y-4 border border-slate-800 flex flex-col justify-between">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="font-heading text-base font-bold text-white">1. By Rainfall Category</h2>
+          <p class="text-xs text-slate-400">Distribution across 3 rainfall regimes</p>
+        </div>
+        <span class="text-xs font-mono px-2 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-400">{{ total_analyses }} total</span>
+      </div>
+
+      <!-- Doughnut Chart Canvas -->
+      <div class="h-56 relative flex items-center justify-center">
+        {% if total_analyses > 0 %}
+          <canvas id="categoryDonutChart"></canvas>
+        {% else %}
+          <!-- Empty State for Chart 1 -->
+          <div class="text-center text-slate-500 text-xs py-10 space-y-2">
+            <svg class="w-8 h-8 mx-auto text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/></svg>
+            <p>No predictions recorded yet.</p>
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Category Legend Grid -->
+      <div class="grid grid-cols-3 gap-2 pt-3 border-t border-slate-800/80 text-center text-xs">
+        <div class="p-2 rounded-xl bg-slate-950/60 border border-slate-800/80">
+          <span class="text-amber-400 block font-mono font-bold">{{ counts_map.Low_to_Medium_Rain }}</span>
+          <span class="text-slate-400 text-[10px] leading-tight block">Low-Med</span>
+        </div>
+        <div class="p-2 rounded-xl bg-slate-950/60 border border-slate-800/80">
+          <span class="text-rose-400 block font-mono font-bold">{{ counts_map.Medium_to_Heavy_Rain }}</span>
+          <span class="text-slate-400 text-[10px] leading-tight block">Med-Heavy</span>
+        </div>
+        <div class="p-2 rounded-xl bg-slate-950/60 border border-slate-800/80">
+          <span class="text-emerald-400 block font-mono font-bold">{{ counts_map.No_to_Low_Rain }}</span>
+          <span class="text-slate-400 text-[10px] leading-tight block">No-Low</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chart 2: Predictions Over Time (4 cols) -->
+    <div class="lg:col-span-4 glass-panel p-6 rounded-3xl space-y-4 border border-slate-800 flex flex-col justify-between">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="font-heading text-base font-bold text-white">2. Predictions Over Time</h2>
+          <p class="text-xs text-slate-400">Activity timeline (past 7 days)</p>
+        </div>
+        <span class="text-xs font-mono px-2 py-0.5 rounded bg-sky-950/60 border border-sky-800 text-sky-400">Daily Trend</span>
+      </div>
+
+      <!-- Line / Area Chart Canvas -->
+      <div class="h-56 relative flex items-center justify-center">
+        {% if total_analyses > 0 %}
+          <canvas id="timelineChart"></canvas>
+        {% else %}
+          <!-- Empty State for Chart 2 -->
+          <div class="text-center text-slate-500 text-xs py-10 space-y-2">
+            <svg class="w-8 h-8 mx-auto text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/></svg>
+            <p>Timeline populated upon first analysis.</p>
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Timeline Metric Footer -->
+      <div class="p-2.5 rounded-xl bg-slate-950/60 border border-slate-800/80 text-xs flex items-center justify-between text-slate-400 font-mono">
+        <span>Today's Activity:</span>
+        <span class="text-sky-400 font-bold">{{ today_analyses }} inferences</span>
+      </div>
+    </div>
+
+    <!-- Chart 3: Confidence Distribution (4 cols) -->
+    <div class="lg:col-span-4 glass-panel p-6 rounded-3xl space-y-4 border border-slate-800 flex flex-col justify-between">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="font-heading text-base font-bold text-white">3. Confidence Distribution</h2>
+          <p class="text-xs text-slate-400">Frequency by certainty bracket</p>
+        </div>
+        <span class="text-xs font-mono px-2 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-400">Certainty</span>
+      </div>
+
+      <!-- Bar Chart Canvas -->
+      <div class="h-56 relative flex items-center justify-center">
+        {% if total_analyses > 0 %}
+          <canvas id="confidenceHistogramChart"></canvas>
+        {% else %}
+          <!-- Empty State for Chart 3 -->
+          <div class="text-center text-slate-500 text-xs py-10 space-y-2">
+            <svg class="w-8 h-8 mx-auto text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+            <p>Confidence spread shown after inference.</p>
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Confidence Legend Footer -->
+      <div class="p-2.5 rounded-xl bg-slate-950/60 border border-slate-800/80 text-xs flex items-center justify-between text-slate-400 font-mono">
+        <span>Average Score:</span>
+        <span class="text-emerald-400 font-bold">{{ avg_conf_pct }}%</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ================================================================= -->
+  <!-- RECENT PREDICTIONS TABLE WITH THUMBNAIL, PREDICTION, CONFIDENCE, ETC -->
+  <!-- ================================================================= -->
+  <div class="glass-panel rounded-3xl overflow-hidden border border-slate-800 shadow-xl">
+    <div class="p-6 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div>
+        <h2 class="font-heading text-lg font-bold text-white">Recent Predictions</h2>
+        <p class="text-xs text-slate-400">Latest cloud specimen analyses logged in database.</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="{% url 'predictions:predict' %}" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-sky-500 hover:bg-sky-400 text-white transition">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          Analyze New Image
+        </a>
+        <a href="{% url 'predictions:history' %}" class="text-xs text-sky-400 hover:text-sky-300 font-medium">View Full Archive &rarr;</a>
+      </div>
+    </div>
+
+    {% if recent_predictions %}
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-sm text-slate-300">
+        <thead class="text-xs text-slate-400 uppercase bg-slate-950/80 border-b border-slate-800 font-mono">
+          <tr>
+            <th class="px-6 py-4">Image Thumbnail</th>
+            <th class="px-6 py-4">Prediction</th>
+            <th class="px-6 py-4">Confidence</th>
+            <th class="px-6 py-4">Date / Time</th>
+            <th class="px-6 py-4 text-right">View</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-800/60 font-normal">
+          {% for record in recent_predictions %}
+          <tr class="hover:bg-slate-800/40 transition">
+            <!-- Image Thumbnail & Original Filename -->
+            <td class="px-6 py-4">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-xl bg-slate-950 border border-slate-800 overflow-hidden flex-shrink-0">
+                  {% if record.image %}
+                    <img src="{{ record.image.url }}" alt="{{ record.original_filename }}" class="w-full h-full object-cover">
+                  {% else %}
+                    <div class="w-full h-full flex items-center justify-center text-xs text-slate-600 font-mono">N/A</div>
+                  {% endif %}
+                </div>
+                <div>
+                  <a href="{% url 'predictions:detail' record.pk %}" class="font-medium text-white hover:text-sky-400 transition truncate max-w-[200px] block">
+                    {{ record.original_filename }}
+                  </a>
+                  <span class="text-[11px] text-slate-500 font-mono">{{ record.model_version }} &bull; {{ record.latency_ms }} ms</span>
+                </div>
+              </div>
+            </td>
+
+            <!-- Prediction (Classified rainfall category badge) -->
+            <td class="px-6 py-4">
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold
+                {% if record.predicted_class == 'Low_to_Medium_Rain' %}bg-amber-500/10 text-amber-300 border border-amber-500/30
+                {% elif record.predicted_class == 'Medium_to_Heavy_Rain' %}bg-rose-500/10 text-rose-300 border border-rose-500/30
+                {% else %}bg-emerald-500/10 text-emerald-300 border border-emerald-500/30{% endif %}">
+                <span class="w-1.5 h-1.5 rounded-full
+                  {% if record.predicted_class == 'Low_to_Medium_Rain' %}bg-amber-400
+                  {% elif record.predicted_class == 'Medium_to_Heavy_Rain' %}bg-rose-400
+                  {% else %}bg-emerald-400{% endif %}"></span>
+                {{ record.display_name }}
+              </span>
+            </td>
+
+            <!-- Confidence -->
+            <td class="px-6 py-4">
+              <div class="flex items-center gap-2.5">
+                <span class="font-mono text-xs font-bold text-white">{{ record.confidence_percent }}%</span>
+                <div class="w-20 bg-slate-950 rounded-full h-2 overflow-hidden border border-slate-800"
+                     role="progressbar" aria-valuenow="{{ record.confidence_percent }}" aria-valuemin="0" aria-valuemax="100" aria-label="Confidence Score">
+                  <div class="h-2 rounded-full {% if record.confidence >= 0.7 %}bg-sky-400{% elif record.confidence >= 0.5 %}bg-amber-400{% else %}bg-rose-400{% endif %}" style="width: {{ record.confidence_percent }}%"></div>
+                </div>
+              </div>
+            </td>
+
+            <!-- Date / Time -->
+            <td class="px-6 py-4 text-xs text-slate-400 font-mono">
+              <div>{{ record.created_at|date:"M d, Y" }}</div>
+              <div class="text-slate-500 text-[11px]">{{ record.created_at|date:"H:i:s" }} UTC</div>
+            </td>
+
+            <!-- View Button -->
+            <td class="px-6 py-4 text-right">
+              <a href="{% url 'predictions:result' record.pk %}" class="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-sky-950 hover:bg-sky-900 border border-sky-800 text-sky-400 transition" title="Inspect result">
+                View &rarr;
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <!-- ================================================================= -->
+    <!-- EMPTY STATE DESIGN (When 0 predictions exist) -->
+    <!-- ================================================================= -->
+    <div class="p-16 text-center space-y-4">
+      <div class="w-16 h-16 rounded-3xl bg-slate-900 border border-slate-800 flex items-center justify-center mx-auto text-slate-500 shadow-inner">
+        <svg class="w-8 h-8 text-sky-400/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 00-9.78 2.096A4.001 4.001 0 003 15z"/>
+        </svg>
+      </div>
+      <div>
+        <h3 class="text-lg font-bold text-white">No Cloud Specimen Analyses Logged Yet</h3>
+        <p class="text-xs text-slate-400 max-w-md mx-auto mt-1">
+          The database currently contains 0 inference records. Upload a cloud photograph to populate real-time analytics, charts, and historical telemetry.
+        </p>
+      </div>
+      <div class="pt-2">
+        <a href="{% url 'predictions:predict' %}" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-xs bg-gradient-to-r from-sky-500 to-indigo-600 text-white shadow-lg shadow-sky-500/25 hover:from-sky-400 hover:to-indigo-500 transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+          Analyze New Image
+        </a>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/charts.js' %}"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    {% if total_analyses > 0 %}
+      // 1. Predictions by Rainfall Category (Donut Chart)
+      renderDistributionDonut(
+        'categoryDonutChart',
+        {{ counts_map.Low_to_Medium_Rain }},
+        {{ counts_map.Medium_to_Heavy_Rain }},
+        {{ counts_map.No_to_Low_Rain }}
+      );
+
+      // 2. Predictions Over Time (Line / Area Chart)
+      const timelineLabels = {{ timeline_labels_json|safe }};
+      const timelineData = {{ timeline_data_json|safe }};
+      renderTimelineChart('timelineChart', timelineLabels, timelineData);
+
+      // 3. Confidence Distribution (Bar Histogram Chart)
+      const confLabels = {{ confidence_labels_json|safe }};
+      const confData = {{ confidence_data_json|safe }};
+      renderConfidenceHistogram('confidenceHistogramChart', confLabels, confData);
+    {% endif %}
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,45 @@
+{
+  "model_path": "D:\\personal\\SkySense_AI\\03_AI_Model\\models\\best_xception_rainfall.keras",
+  "total_test_samples": 381,
+  "test_accuracy": 0.5827,
+  "test_loss": 0.9103,
+  "macro_avg_f1": 0.566,
+  "weighted_avg_f1": 0.5758,
+  "class_breakdown": {
+    "Low_to_Medium_Rain": {
+      "precision": 0.54,
+      "recall": 0.72,
+      "f1_score": 0.6171,
+      "support": 150
+    },
+    "Medium_to_Heavy_Rain": {
+      "precision": 0.6923,
+      "recall": 0.3871,
+      "f1_score": 0.4966,
+      "support": 93
+    },
+    "No_to_Low_Rain": {
+      "precision": 0.6047,
+      "recall": 0.5652,
+      "f1_score": 0.5843,
+      "support": 138
+    }
+  },
+  "confusion_matrix": [
+    [
+      108,
+      10,
+      32
+    ],
+    [
+      38,
+      36,
+      19
+    ],
+    [
+      54,
+      6,
+      78
+    ]
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "train": {
+    "Low_to_Medium_Rain": 703,
+    "Medium_to_Heavy_Rain": 437,
+    "No_to_Low_Rain": 640
+  },
+  "val": {
+    "Low_to_Medium_Rain": 151,
+    "Medium_to_Heavy_Rain": 94,
+    "No_to_Low_Rain": 137
+  },
+  "test": {
+    "Low_to_Medium_Rain": 150,
+    "Medium_to_Heavy_Rain": 93,
+    "No_to_Low_Rain": 138
+  },
+  "total": {
+    "Low_to_Medium_Rain": 1004,
+    "Medium_to_Heavy_Rain": 624,
+    "No_to_Low_Rain": 915
+  },
+  "summary": {
+    "train_count": 1780,
+    "val_count": 382,
+    "test_count": 381,
+    "total_count": 2543,
+    "random_seed": 42,
+    "train_percentage": 70.0,
+    "val_percentage": 15.02,
+    "test_percentage": 14.98
+  }
+}

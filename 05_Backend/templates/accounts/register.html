@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Create Researcher Account - SKYsense AI{% endblock %}
+
+{% block content %}
+<div class="min-h-[calc(100vh-14rem)] flex items-center justify-center px-4 py-12">
+  <div class="w-full max-w-xl">
+    
+    <!-- Header / Brand Icon -->
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 mb-4 shadow-lg shadow-indigo-500/10">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+        </svg>
+      </div>
+      <h1 class="text-2xl sm:text-3xl font-heading font-extrabold text-white tracking-tight">Create Researcher Account</h1>
+      <p class="text-sm text-slate-400 mt-2">Join SKYsense AI to analyze satellite & cloud imagery with isolated prediction telemetry</p>
+    </div>
+
+    <!-- Registration Glassmorphic Card -->
+    <div class="glass-panel p-8 rounded-2xl border border-slate-800 shadow-2xl relative overflow-hidden">
+      <!-- Ambient Glow -->
+      <div class="absolute -top-24 -left-24 w-48 h-48 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      <!-- Messages / Feedback -->
+      {% if messages %}
+        <div class="space-y-3 mb-6">
+          {% for message in messages %}
+            <div class="p-3.5 rounded-xl text-xs sm:text-sm font-medium border flex items-center gap-2.5 {% if message.tags == 'error' %}bg-rose-500/10 border-rose-500/30 text-rose-300{% elif message.tags == 'success' %}bg-emerald-500/10 border-emerald-500/30 text-emerald-300{% else %}bg-sky-500/10 border-sky-500/30 text-sky-300{% endif %}">
+              <span>{{ message }}</span>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <form method="post" action="{% url 'register' %}" class="space-y-5">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+          <div class="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs sm:text-sm space-y-1">
+            {% for error in form.non_field_errors %}
+              <p>{{ error }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <!-- Username & Email (Grid) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label for="{{ form.username.id_for_label }}" class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">
+              Username <span class="text-rose-400">*</span>
+            </label>
+            {{ form.username }}
+            {% if form.username.errors %}
+              <p class="text-xs text-rose-400 mt-1.5">{{ form.username.errors.0 }}</p>
+            {% endif %}
+            <p class="text-[11px] text-slate-400 mt-1">Letters, digits, and @/./+/-/_ only</p>
+          </div>
+
+          <div>
+            <label for="{{ form.email.id_for_label }}" class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">
+              Email Address <span class="text-rose-400">*</span>
+            </label>
+            {{ form.email }}
+            {% if form.email.errors %}
+              <p class="text-xs text-rose-400 mt-1.5">{{ form.email.errors.0 }}</p>
+            {% endif %}
+            <p class="text-[11px] text-slate-400 mt-1">Used for notifications and access</p>
+          </div>
+        </div>
+
+        <!-- First Name & Last Name (Grid) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label for="{{ form.first_name.id_for_label }}" class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">
+              First Name
+            </label>
+            {{ form.first_name }}
+            {% if form.first_name.errors %}
+              <p class="text-xs text-rose-400 mt-1.5">{{ form.first_name.errors.0 }}</p>
+            {% endif %}
+          </div>
+
+          <div>
+            <label for="{{ form.last_name.id_for_label }}" class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">
+              Last Name
+            </label>
+            {{ form.last_name }}
+            {% if form.last_name.errors %}
+              <p class="text-xs text-rose-400 mt-1.5">{{ form.last_name.errors.0 }}</p>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Password Fields (Grid) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label for="{{ form.password1.id_for_label }}" class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">
+              Password <span class="text-rose-400">*</span>
+            </label>
+            {{ form.password1 }}
+            {% if form.password1.errors %}
+              <p class="text-xs text-rose-400 mt-1.5">{{ form.password1.errors.0 }}</p>
+            {% endif %}
+          </div>
+
+          <div>
+            <label for="{{ form.password2.id_for_label }}" class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">
+              Confirm Password <span class="text-rose-400">*</span>
+            </label>
+            {{ form.password2 }}
+            {% if form.password2.errors %}
+              <p class="text-xs text-rose-400 mt-1.5">{{ form.password2.errors.0 }}</p>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Security Features Notice -->
+        <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 text-xs text-slate-400 space-y-1.5">
+          <div class="flex items-center gap-2 text-slate-300 font-semibold">
+            <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+            </svg>
+            Built-in Security Guarantee
+          </div>
+          <p>
+            Passwords are salted and cryptographically hashed with Django's native PBKDF2 algorithm. No plain text or custom password storage is ever used. User prediction archives are strictly partitioned.
+          </p>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="w-full py-3 px-4 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 shadow-lg shadow-sky-500/25 transition-all duration-200 transform hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          Complete Registration & Enter
+        </button>
+      </form>
+
+    </div>
+
+    <!-- Sign In Link Footer -->
+    <div class="text-center mt-6 text-sm text-slate-400">
+      Already have an account?
+      <a href="{% url 'login' %}" class="text-sky-400 hover:text-sky-300 font-semibold underline underline-offset-4 ml-1">
+        Sign in here
+      </a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

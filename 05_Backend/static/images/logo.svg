@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" fill="none">
+  <defs>
+    <linearGradient id="skyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8"/>
+      <stop offset="100%" stop-color="#2563EB"/>
+    </linearGradient>
+    <linearGradient id="cloudGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E2E8F0"/>
+      <stop offset="100%" stop-color="#94A3B8"/>
+    </linearGradient>
+  </defs>
+  <!-- Background Badge -->
+  <rect width="40" height="40" rx="10" fill="#0F172A"/>
+  <rect x="0.5" y="0.5" width="39" height="39" rx="9.5" stroke="#334155"/>
+  <!-- Weather Cloud + AI Pulse -->
+  <path d="M12 24C10.3431 24 9 22.6569 9 21C9 19.4674 10.148 18.2024 11.6247 18.0253C12.0626 15.1741 14.5262 13 17.5 13C19.7891 13 21.7825 14.2882 22.7758 16.1601C23.2384 15.8078 23.8188 15.6 24.4444 15.6C25.8559 15.6 27 16.7441 27 18.1556C27 18.3758 26.9721 18.5894 26.9197 18.7932C28.1257 19.3499 28.963 20.5758 28.963 22C28.963 23.9056 27.4186 25.45 25.513 25.45H12Z" fill="url(#cloudGrad)"/>
+  <!-- Raindrops / AI Data Points -->
+  <circle cx="14" cy="28" r="1.2" fill="#38BDF8"/>
+  <circle cx="19" cy="30" r="1.2" fill="#38BDF8"/>
+  <circle cx="24" cy="28" r="1.2" fill="#38BDF8"/>
+  <!-- AI Sparkle Core -->
+  <path d="M28 9L29 11L31 12L29 13L28 15L27 13L25 12L27 11L28 9Z" fill="#38BDF8"/>
+</svg>

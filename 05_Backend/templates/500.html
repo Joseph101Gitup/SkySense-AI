@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="max-w-xl mx-auto py-16 text-center space-y-6">
+  <div class="w-20 h-20 rounded-3xl bg-rose-950 border border-rose-800 text-rose-400 mx-auto flex items-center justify-center font-mono text-2xl font-bold">
+    500
+  </div>
+  <div class="space-y-2">
+    <h1 class="font-heading text-3xl font-extrabold text-white">System Processing Error</h1>
+    <p class="text-sm text-slate-400">An unexpected issue occurred while evaluating the request. The diagnostic log has been registered for engineering review.</p>
+  </div>
+  <div class="flex justify-center gap-3 pt-4">
+    <a href="{% url 'predictions:predict' %}" class="px-5 py-2.5 rounded-xl text-xs font-semibold bg-sky-500 hover:bg-sky-400 text-white transition">
+      Try Another Image
+    </a>
+    <a href="{% url 'core:dashboard' %}" class="px-5 py-2.5 rounded-xl text-xs font-medium bg-slate-900 border border-slate-700 text-slate-300 hover:text-white transition">
+      Dashboard
+    </a>
+  </div>
+</div>
+{% endblock %}

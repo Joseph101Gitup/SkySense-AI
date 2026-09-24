@@ -1,0 +1,43 @@
+{% if messages %}
+<div class="fixed bottom-6 right-6 z-50 flex flex-col gap-3 max-w-md w-full px-4 pointer-events-none">
+  {% for message in messages %}
+  <div class="alert-auto-dismiss pointer-events-auto p-4 rounded-xl border shadow-xl flex items-start gap-3 backdrop-blur-md transition-all duration-300
+    {% if message.tags == 'success' %}
+      bg-emerald-950/85 border-emerald-500/40 text-emerald-200
+    {% elif message.tags == 'error' %}
+      bg-rose-950/85 border-rose-500/40 text-rose-200
+    {% elif message.tags == 'warning' %}
+      bg-amber-950/85 border-amber-500/40 text-amber-200
+    {% else %}
+      bg-slate-900/90 border-slate-700 text-slate-200
+    {% endif %}">
+    
+    <div class="flex-shrink-0 mt-0.5">
+      {% if message.tags == 'success' %}
+        <svg class="w-5 h-5 text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+        </svg>
+      {% elif message.tags == 'error' %}
+        <svg class="w-5 h-5 text-rose-400" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+        </svg>
+      {% else %}
+        <svg class="w-5 h-5 text-sky-400" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+        </svg>
+      {% endif %}
+    </div>
+
+    <div class="flex-1 text-sm font-medium leading-tight">
+      {{ message }}
+    </div>
+
+    <button type="button" onclick="this.parentElement.remove()" class="text-slate-400 hover:text-white transition">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+      </svg>
+    </button>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}

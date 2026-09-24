@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="max-w-xl mx-auto py-16 text-center space-y-6">
+  <div class="w-20 h-20 rounded-3xl bg-sky-950 border border-sky-800 text-sky-400 mx-auto flex items-center justify-center font-mono text-2xl font-bold">
+    404
+  </div>
+  <div class="space-y-2">
+    <h1 class="font-heading text-3xl font-extrabold text-white">Record or Page Not Found</h1>
+    <p class="text-sm text-slate-400">The prediction record or page you requested does not exist or has been removed.</p>
+  </div>
+  <div class="flex justify-center gap-3 pt-4">
+    <a href="{% url 'predictions:predict' %}" class="px-5 py-2.5 rounded-xl text-xs font-semibold bg-sky-500 hover:bg-sky-400 text-white transition">
+      Analyze Cloud Image
+    </a>
+    <a href="{% url 'core:dashboard' %}" class="px-5 py-2.5 rounded-xl text-xs font-medium bg-slate-900 border border-slate-700 text-slate-300 hover:text-white transition">
+      Return to Dashboard
+    </a>
+  </div>
+</div>
+{% endblock %}

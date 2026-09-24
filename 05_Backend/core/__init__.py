@@ -1,0 +1,3 @@
+"""
+SKYsense AI - Core Application
+"""

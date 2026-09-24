@@ -1,0 +1,309 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <!-- Header -->
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between pb-6 border-b border-slate-800 gap-4">
+    <div>
+      <div class="flex items-center space-x-2 text-sky-400 text-sm font-mono mb-1">
+        <span>ARCHIVE & OBSERVATION LOGS</span>
+      </div>
+      <h1 class="text-3xl font-extrabold text-white tracking-tight">Prediction History</h1>
+      <p class="text-slate-400 text-sm mt-1">Review, filter, and inspect previously analyzed meteorological cloud records.</p>
+    </div>
+    <div class="flex items-center space-x-3">
+      <a href="{% url 'predictions:predict' %}" class="inline-flex items-center px-4 py-2 rounded-lg bg-sky-500 hover:bg-sky-400 text-white font-medium text-sm transition shadow-lg shadow-sky-500/20">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+        New Prediction
+      </a>
+    </div>
+  </div>
+
+  <!-- Filters & Search Toolbar -->
+  <div class="mt-6 bg-slate-900/90 border border-slate-800 rounded-xl p-5 shadow-lg space-y-4">
+    <form method="GET" action="{% url 'predictions:history' %}" class="space-y-4">
+      <!-- Row 1: Search, Category, Sort -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+        <!-- Search Input -->
+        <div class="md:col-span-5 relative">
+          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Search Records</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            </div>
+            <input type="text" name="q" value="{{ search_query }}" placeholder="Search image name, notes, or UUID..." class="w-full bg-slate-950 border border-slate-700 rounded-lg pl-10 pr-4 py-2 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition">
+          </div>
+        </div>
+
+        <!-- Category Filter -->
+        <div class="md:col-span-4">
+          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Precipitation Class</label>
+          <select name="category" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition">
+            <option value="" {% if not current_category %}selected{% endif %}>All Precipitation Classes</option>
+            <option value="Low_to_Medium_Rain" {% if current_category == 'Low_to_Medium_Rain' %}selected{% endif %}>Low to Medium Rain</option>
+            <option value="Medium_to_Heavy_Rain" {% if current_category == 'Medium_to_Heavy_Rain' %}selected{% endif %}>Medium to Heavy Rain</option>
+            <option value="No_to_Low_Rain" {% if current_category == 'No_to_Low_Rain' %}selected{% endif %}>No to Low Rain</option>
+          </select>
+        </div>
+
+        <!-- Sorting -->
+        <div class="md:col-span-3">
+          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Sort Order</label>
+          <select name="sort" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition">
+            <option value="newest" {% if current_sort == 'newest' %}selected{% endif %}>Newest First</option>
+            <option value="oldest" {% if current_sort == 'oldest' %}selected{% endif %}>Oldest First</option>
+            <option value="highest_confidence" {% if current_sort == 'highest_confidence' %}selected{% endif %}>Highest Confidence</option>
+            <option value="lowest_confidence" {% if current_sort == 'lowest_confidence' %}selected{% endif %}>Lowest Confidence</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Row 2: Date Filters & Action Buttons -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end pt-2 border-t border-slate-800/80">
+        <!-- Date Preset Filter -->
+        <div class="md:col-span-3">
+          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Date Range Preset</label>
+          <select name="date_range" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition">
+            <option value="" {% if not date_preset %}selected{% endif %}>All Time</option>
+            <option value="today" {% if date_preset == 'today' %}selected{% endif %}>Today</option>
+            <option value="yesterday" {% if date_preset == 'yesterday' %}selected{% endif %}>Yesterday</option>
+            <option value="last_7_days" {% if date_preset == 'last_7_days' %}selected{% endif %}>Last 7 Days</option>
+            <option value="last_30_days" {% if date_preset == 'last_30_days' %}selected{% endif %}>Last 30 Days</option>
+          </select>
+        </div>
+
+        <!-- Custom Date From -->
+        <div class="md:col-span-3">
+          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Date From</label>
+          <input type="date" name="date_from" value="{{ date_from }}" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition">
+        </div>
+
+        <!-- Custom Date To -->
+        <div class="md:col-span-3">
+          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Date To</label>
+          <input type="date" name="date_to" value="{{ date_to }}" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition">
+        </div>
+
+        <!-- Buttons -->
+        <div class="md:col-span-3 flex items-center space-x-2">
+          <button type="submit" class="flex-1 inline-flex items-center justify-center px-4 py-2 rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-medium text-sm transition shadow-sm">
+            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/></svg>
+            Apply Filters
+          </button>
+          {% if search_query or current_category or current_sort != 'newest' or date_preset or date_from or date_to %}
+          <a href="{% url 'predictions:history' %}" class="p-2 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded-lg transition border border-slate-700" title="Reset All Filters">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </a>
+          {% endif %}
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Summary Bar -->
+  <div class="mt-4 flex flex-wrap items-center justify-between text-xs text-slate-400 px-1 gap-2">
+    <div>
+      Showing <strong class="text-slate-200">{{ page_obj.start_index|default:0 }}-{{ page_obj.end_index|default:0 }}</strong> of <strong class="text-slate-200">{{ page_obj.paginator.count|default:0 }}</strong> total records
+    </div>
+    <div class="flex items-center space-x-2">
+      {% if search_query or current_category or date_preset or date_from or date_to %}
+      <span class="text-sky-400 bg-sky-950/80 border border-sky-800 px-2.5 py-1 rounded text-xs font-mono">
+        Active Filters
+        {% if search_query %}&bull; Query: "{{ search_query }}"{% endif %}
+        {% if current_category %}&bull; Class: {{ current_category }}{% endif %}
+        {% if date_preset %}&bull; Range: {{ date_preset }}{% endif %}
+        {% if date_from %}&bull; From: {{ date_from }}{% endif %}
+        {% if date_to %}&bull; To: {{ date_to }}{% endif %}
+      </span>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Records Table / Cards -->
+  {% if page_obj %}
+  <div class="mt-4 bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-sm">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-sm text-slate-300">
+        <thead class="bg-slate-950 text-xs uppercase tracking-wider text-slate-400 border-b border-slate-800">
+          <tr>
+            <th scope="col" class="px-6 py-4">Cloud Specimen</th>
+            <th scope="col" class="px-4 py-4">Source</th>
+            <th scope="col" class="px-6 py-4">Classification</th>
+            <th scope="col" class="px-6 py-4">Confidence</th>
+            <th scope="col" class="px-6 py-4">Probability Breakdown</th>
+            <th scope="col" class="px-6 py-4">Analyzed At</th>
+            <th scope="col" class="px-6 py-4 text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-800/80">
+          {% for record in page_obj %}
+          <tr class="hover:bg-slate-800/40 transition">
+            <!-- Image & Name -->
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="flex items-center space-x-3">
+                <div class="w-12 h-12 rounded-lg bg-slate-950 overflow-hidden border border-slate-700/60 flex-shrink-0">
+                  {% if record.image %}
+                  <img src="{{ record.image.url }}" alt="{{ record.image_filename }}" class="w-full h-full object-cover">
+                  {% else %}
+                  <div class="w-full h-full flex items-center justify-center text-slate-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                  </div>
+                  {% endif %}
+                </div>
+                <div>
+                  <a href="{% url 'predictions:detail' record.pk %}" class="font-medium text-white hover:text-sky-400 transition truncate max-w-xs block">
+                    {{ record.image_filename|truncatechars:28 }}
+                  </a>
+                  <span class="text-xs text-slate-500 font-mono">
+                    {{ record.image_size_kb }} KB &bull; {{ record.latency_ms }} ms
+                  </span>
+                </div>
+              </div>
+            </td>
+
+            <!-- Source Type Badge -->
+            <td class="px-4 py-4 whitespace-nowrap">
+              <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-mono font-medium {% if record.source_type == 'WEB_UPLOAD' %}bg-sky-950/70 text-sky-400 border border-sky-800/60{% elif record.source_type == 'IOT_DEVICE' %}bg-amber-950/70 text-amber-300 border border-amber-800/60{% else %}bg-purple-950/70 text-purple-300 border border-purple-800/60{% endif %}">
+                {{ record.get_source_type_display|default:record.source_type }}
+              </span>
+            </td>
+
+            <!-- Category Badge -->
+            <td class="px-6 py-4 whitespace-nowrap">
+              {% if record.predicted_class == 'Low_to_Medium_Rain' %}
+              <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-950/70 text-amber-300 border border-amber-800/60">
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-400 mr-1.5"></span>
+                Low to Medium Rain
+              </span>
+              {% elif record.predicted_class == 'Medium_to_Heavy_Rain' %}
+              <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-950/70 text-rose-300 border border-rose-800/60">
+                <span class="w-1.5 h-1.5 rounded-full bg-rose-400 mr-1.5"></span>
+                Medium to Heavy Rain
+              </span>
+              {% else %}
+              <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-950/70 text-emerald-300 border border-emerald-800/60">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5"></span>
+                No to Low Rain
+              </span>
+              {% endif %}
+            </td>
+
+            <!-- Confidence -->
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="flex items-center space-x-2">
+                <div class="w-16 bg-slate-950 rounded-full h-2 overflow-hidden border border-slate-800"
+                     role="progressbar" aria-valuenow="{{ record.confidence_percent }}" aria-valuemin="0" aria-valuemax="100" aria-label="Confidence score">
+                  <div class="h-full {% if record.confidence >= 0.7 %}bg-sky-400{% elif record.confidence >= 0.5 %}bg-amber-400{% else %}bg-rose-400{% endif %}" style="width: {{ record.confidence_percent }}%"></div>
+                </div>
+                <span class="font-mono text-xs text-white font-semibold">{{ record.confidence_percent }}%</span>
+              </div>
+            </td>
+
+            <!-- Probabilities Mini Bar -->
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="w-36 flex flex-col space-y-1">
+                <div class="flex justify-between text-[10px] font-mono text-slate-400">
+                  <span>L: {{ record.prob_low_pct }}%</span>
+                  <span>M: {{ record.prob_med_pct }}%</span>
+                  <span>N: {{ record.prob_no_pct }}%</span>
+                </div>
+                <div class="w-full h-1.5 bg-slate-950 rounded-full overflow-hidden flex border border-slate-800">
+                  <div class="bg-amber-400 h-full" style="width: {{ record.prob_low_pct }}%" title="Low-Medium: {{ record.prob_low_pct }}%"></div>
+                  <div class="bg-rose-500 h-full" style="width: {{ record.prob_med_pct }}%" title="Med-Heavy: {{ record.prob_med_pct }}%"></div>
+                  <div class="bg-emerald-400 h-full" style="width: {{ record.prob_no_pct }}%" title="No-Low: {{ record.prob_no_pct }}%"></div>
+                </div>
+              </div>
+            </td>
+
+            <!-- Timestamp -->
+            <td class="px-6 py-4 whitespace-nowrap text-xs text-slate-400">
+              <div>{{ record.created_at|date:"M d, Y" }}</div>
+              <div class="text-slate-500 font-mono">{{ record.created_at|date:"H:i:s" }} UTC</div>
+            </td>
+
+            <!-- Actions -->
+            <td class="px-6 py-4 whitespace-nowrap text-right text-xs">
+              <div class="flex items-center justify-end space-x-2">
+                <a href="{% url 'predictions:result' record.pk %}" class="px-2.5 py-1.5 rounded bg-sky-950 text-sky-400 hover:bg-sky-900 border border-sky-800 transition" title="Inspect Result Page">
+                  Result
+                </a>
+                <a href="{% url 'predictions:detail' record.pk %}" class="px-2.5 py-1.5 rounded bg-slate-800 text-slate-300 hover:bg-slate-700 transition" title="View Full Detail">
+                  Details
+                </a>
+                <form method="POST" action="{% url 'predictions:delete' record.pk %}" class="inline" onsubmit="return confirm('Permanently remove this prediction record? This operation cannot be undone.');">
+                  {% csrf_token %}
+                  <button type="submit" class="p-1.5 rounded text-slate-500 hover:text-rose-400 hover:bg-rose-950/40 transition" title="Delete Record">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                  </button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+    <div class="bg-slate-950 px-6 py-4 border-t border-slate-800 flex items-center justify-between">
+      <div class="text-xs text-slate-400">
+        Page <span class="font-bold text-white">{{ page_obj.number }}</span> of <span class="font-bold text-white">{{ page_obj.paginator.num_pages }}</span>
+      </div>
+      <div class="flex items-center space-x-2">
+        {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}{% if current_category %}&category={{ current_category }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}{% if date_preset %}&date_range={{ date_preset }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}{% if date_to %}&date_to={{ date_to }}{% endif %}" class="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800 hover:text-white text-xs transition">
+          Previous
+        </a>
+        {% else %}
+        <span class="px-3 py-1.5 rounded-lg bg-slate-900/50 border border-slate-800/50 text-slate-600 text-xs cursor-not-allowed">Previous</span>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+          {% if page_obj.number == num %}
+          <span class="px-3 py-1.5 rounded-lg bg-sky-500 text-white font-bold text-xs">{{ num }}</span>
+          {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+          <a href="?page={{ num }}{% if current_category %}&category={{ current_category }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}{% if date_preset %}&date_range={{ date_preset }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}{% if date_to %}&date_to={{ date_to }}{% endif %}" class="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 hover:bg-slate-800 hover:text-white text-xs transition">{{ num }}</a>
+          {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if current_category %}&category={{ current_category }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}{% if date_preset %}&date_range={{ date_preset }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}{% if date_to %}&date_to={{ date_to }}{% endif %}" class="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:bg-slate-800 hover:text-white text-xs transition">
+          Next
+        </a>
+        {% else %}
+        <span class="px-3 py-1.5 rounded-lg bg-slate-900/50 border border-slate-800/50 text-slate-600 text-xs cursor-not-allowed">Next</span>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+  {% else %}
+  <!-- Empty State -->
+  <div class="mt-8 bg-slate-900 border border-slate-800 rounded-xl p-12 text-center">
+    <div class="w-16 h-16 rounded-full bg-slate-800 flex items-center justify-center mx-auto text-slate-500 mb-4">
+      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+    </div>
+    <h3 class="text-lg font-bold text-white">No prediction records found</h3>
+    <p class="text-sm text-slate-400 max-w-md mx-auto mt-2">
+      {% if search_query or current_category or date_preset or date_from or date_to %}
+      No historical records match your filter criteria. Try adjusting the query, date parameters, or clearing filters.
+      {% else %}
+      You haven't run any cloud predictions yet. Upload an image to start evaluating rainfall probabilities.
+      {% endif %}
+    </p>
+    <div class="mt-6 flex justify-center space-x-3">
+      {% if search_query or current_category or date_preset or date_from or date_to %}
+      <a href="{% url 'predictions:history' %}" class="inline-flex items-center px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium text-sm transition">
+        Clear All Filters
+      </a>
+      {% endif %}
+      <a href="{% url 'predictions:predict' %}" class="inline-flex items-center px-4 py-2 rounded-lg bg-sky-500 hover:bg-sky-400 text-white font-medium text-sm transition">
+        Analyze Image
+      </a>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

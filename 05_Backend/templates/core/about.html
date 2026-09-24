@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <!-- Hero Section -->
+  <div class="text-center max-w-3xl mx-auto">
+    <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-sky-950 border border-sky-800 text-sky-400 text-xs font-mono mb-4">
+      <span>ACADEMIC DISSERTATION &amp; ENGINEERING SHOWCASE</span>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-extrabold text-white tracking-tight">
+      About <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-indigo-400 to-purple-400">SKYsense AI</span>
+    </h1>
+    <p class="mt-4 text-slate-300 text-base md:text-lg leading-relaxed">
+      A computer vision and deep learning system for automated rainfall likelihood estimation from sky-facing cloud imagery.
+    </p>
+  </div>
+
+  <!-- Project Overview Cards -->
+  <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+      <div class="w-10 h-10 rounded-xl bg-sky-950 border border-sky-800 flex items-center justify-center text-sky-400 mb-4">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+      </div>
+      <h3 class="text-base font-bold text-white mb-2">Master's Thesis Project</h3>
+      <p class="text-slate-400 text-xs leading-relaxed">
+        Developed as a final-year graduate engineering project combining computer vision, meteorological data processing, and production web deployment.
+      </p>
+    </div>
+
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+      <div class="w-10 h-10 rounded-xl bg-purple-950 border border-purple-800 flex items-center justify-center text-purple-400 mb-4">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+      </div>
+      <h3 class="text-base font-bold text-white mb-2">Xception Transfer Learning</h3>
+      <p class="text-slate-400 text-xs leading-relaxed">
+        Harnesses Google's 36-layer depthwise separable convolutional neural network pre-trained on ImageNet, fine-tuned for optical cloud morphology.
+      </p>
+    </div>
+
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+      <div class="w-10 h-10 rounded-xl bg-emerald-950 border border-emerald-800 flex items-center justify-center text-emerald-400 mb-4">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+      </div>
+      <h3 class="text-base font-bold text-white mb-2">Production Django Engine</h3>
+      <p class="text-slate-400 text-xs leading-relaxed">
+        Engineered with clean architectural separation: Django handles the web dashboard and REST API, communicating seamlessly with a dedicated inference singleton.
+      </p>
+    </div>
+  </div>
+
+  <!-- Scientific & Academic Integrity Disclosure -->
+  <div class="mt-12 bg-gradient-to-r from-amber-950/40 to-slate-900 border border-amber-800/60 rounded-2xl p-6 md:p-8">
+    <div class="flex items-start space-x-4">
+      <div class="p-2 rounded-xl bg-amber-950 border border-amber-700/60 text-amber-400 flex-shrink-0">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+      </div>
+      <div>
+        <h2 class="text-lg font-bold text-white">Scientific Disclosure &amp; Scope of Classification</h2>
+        <p class="mt-2 text-sm text-slate-300 leading-relaxed">
+          Initial exploratory notebooks within the project referenced 11 World Meteorological Organization (WMO) cloud genus categories (such as <em>Cirrus, Cumulonimbus, Stratus, Nimbostratus</em>). Rigorous dataset auditing established that the verified dataset partitions into <strong>3 verified rainfall likelihood categories</strong> across 2,543 images:
+        </p>
+        <ul class="mt-3 grid grid-cols-1 md:grid-cols-3 gap-3 text-xs font-mono">
+          <li class="bg-slate-950/80 p-3 rounded-lg border border-amber-900/40 text-amber-300">
+            <strong>0: Low_to_Medium_Rain</strong><br><span class="text-slate-400">1,004 images (39.5%)</span>
+          </li>
+          <li class="bg-slate-950/80 p-3 rounded-lg border border-rose-900/40 text-rose-300">
+            <strong>1: Medium_to_Heavy_Rain</strong><br><span class="text-slate-400">624 images (24.5%)</span>
+          </li>
+          <li class="bg-slate-950/80 p-3 rounded-lg border border-emerald-900/40 text-emerald-300">
+            <strong>2: No_to_Low_Rain</strong><br><span class="text-slate-400">915 images (36.0%)</span>
+          </li>
+        </ul>
+        <p class="mt-3 text-xs text-slate-400">
+          Consequently, SKYsense AI explicitly operates as a <strong>3-class rainfall category classifier</strong>, preserving rigorous scientific integrity and transparent empirical evaluation.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- End-to-End Architecture -->
+  <div class="mt-12 bg-slate-900 border border-slate-800 rounded-2xl p-8 shadow-xl">
+    <h2 class="text-xl font-bold text-white mb-6 flex items-center">
+      <svg class="w-5 h-5 mr-2 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+      System Architecture &amp; Data Pipeline
+    </h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
+      <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+        <div class="text-sky-400 font-mono font-bold mb-1">01 / INGESTION</div>
+        <h4 class="text-white font-semibold text-sm mb-1">Optical Capture</h4>
+        <p class="text-slate-400">JPG/PNG sky images uploaded through web portal or sent via REST API from edge weather stations.</p>
+      </div>
+      <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+        <div class="text-sky-400 font-mono font-bold mb-1">02 / PREPROCESSING</div>
+        <h4 class="text-white font-semibold text-sm mb-1">Validation &amp; Rescaling</h4>
+        <p class="text-slate-400">Payload inspection (&lt;15MB), RGB conversion, resizing to 256&times;256, and floating-point [0.0, 1.0] scaling.</p>
+      </div>
+      <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+        <div class="text-sky-400 font-mono font-bold mb-1">03 / INFERENCE</div>
+        <h4 class="text-white font-semibold text-sm mb-1">Xception Neural Net</h4>
+        <p class="text-slate-400">Cached singleton model evaluation via TensorFlow 2.19, generating class probabilities via Softmax.</p>
+      </div>
+      <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+        <div class="text-sky-400 font-mono font-bold mb-1">04 / DISSEMINATION</div>
+        <h4 class="text-white font-semibold text-sm mb-1">Dashboard &amp; Storage</h4>
+        <p class="text-slate-400">Results recorded in SQLite database, rendered in interactive responsive UI with meteorological advisories.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tech Stack Grid -->
+  <div class="mt-12 bg-slate-900 border border-slate-800 rounded-2xl p-8 shadow-xl">
+    <h2 class="text-xl font-bold text-white mb-6">Technologies &amp; Frameworks</h2>
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 text-center">
+      <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+        <div class="text-emerald-400 font-bold text-sm">Django 5.2</div>
+        <div class="text-[11px] text-slate-500 mt-1">Web Backend</div>
+      </div>
+      <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+        <div class="text-amber-400 font-bold text-sm">TensorFlow 2.19</div>
+        <div class="text-[11px] text-slate-500 mt-1">Deep Learning</div>
+      </div>
+      <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+        <div class="text-sky-400 font-bold text-sm">Xception CNN</div>
+        <div class="text-[11px] text-slate-500 mt-1">Computer Vision</div>
+      </div>
+      <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+        <div class="text-cyan-400 font-bold text-sm">Tailwind CSS</div>
+        <div class="text-[11px] text-slate-500 mt-1">UI Styling</div>
+      </div>
+      <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+        <div class="text-rose-400 font-bold text-sm">Chart.js</div>
+        <div class="text-[11px] text-slate-500 mt-1">Data Visualization</div>
+      </div>
+      <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+        <div class="text-purple-400 font-bold text-sm">SQLite 3</div>
+        <div class="text-[11px] text-slate-500 mt-1">Data Persistence</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation Buttons -->
+  <div class="mt-12 flex justify-center space-x-4">
+    <a href="{% url 'core:model_info' %}" class="px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-medium text-sm transition">
+      Explore Model Architecture &rarr;
+    </a>
+    <a href="{% url 'core:research_metrics' %}" class="px-6 py-3 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-medium text-sm transition">
+      View Evaluation Metrics &rarr;
+    </a>
+  </div>
+</div>
+{% endblock %}

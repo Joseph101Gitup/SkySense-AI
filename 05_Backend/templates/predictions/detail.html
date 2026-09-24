@@ -1,0 +1,294 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <!-- Breadcrumb -->
+  <nav class="flex items-center space-x-2 text-xs text-slate-400 mb-6 font-mono">
+    <a href="{% url 'core:dashboard' %}" class="hover:text-sky-400 transition">Dashboard</a>
+    <span>/</span>
+    <a href="{% url 'predictions:history' %}" class="hover:text-sky-400 transition">History</a>
+    <span>/</span>
+    <span class="text-slate-200 truncate max-w-xs">{{ record.image_filename }}</span>
+  </nav>
+
+  <!-- Page Header -->
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between pb-6 border-b border-slate-800 gap-4">
+    <div>
+      <div class="flex flex-wrap items-center gap-2 text-sky-400 text-xs font-mono mb-1">
+        <span>PREDICTION RECORD #{{ record.id }}</span>
+        <span>&bull;</span>
+        <span>{{ record.created_at|date:"M d, Y H:i:s" }} UTC</span>
+        <span>&bull;</span>
+        <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-sky-950 text-sky-300 border border-sky-800">
+          Source: {{ record.get_source_type_display|default:record.source_type }}
+        </span>
+      </div>
+      <h1 class="text-3xl font-extrabold text-white tracking-tight">{{ record.display_name }}</h1>
+    </div>
+    <div class="flex items-center space-x-3">
+      <a href="{% url 'predictions:result' record.pk %}" class="inline-flex items-center px-4 py-2 rounded-lg bg-sky-950 hover:bg-sky-900 border border-sky-800 text-sky-400 font-medium text-sm transition">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+        Result View
+      </a>
+      <a href="{% url 'predictions:predict' %}" class="inline-flex items-center px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium text-sm transition">
+        Analyze Another
+      </a>
+    </div>
+  </div>
+
+  <!-- Content Grid -->
+  <div class="mt-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
+    <!-- Left Column: Image Specimen & Provenance Metadata (5 cols) -->
+    <div class="lg:col-span-5 space-y-6">
+      <!-- Image Specimen Card -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl p-4">
+        <div class="relative aspect-square w-full rounded-xl overflow-hidden bg-slate-950 border border-slate-800 flex items-center justify-center">
+          {% if record.image %}
+          <img src="{{ record.image.url }}" alt="{{ record.image_filename }}" class="w-full h-full object-cover">
+          {% else %}
+          <div class="text-slate-600 text-center p-4">
+            <svg class="w-12 h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            <span>Image not available</span>
+          </div>
+          {% endif %}
+          <div class="absolute bottom-3 left-3 bg-slate-950/80 backdrop-blur-md px-3 py-1 rounded-md text-xs font-mono text-slate-300 border border-slate-800">
+            Rescaled: 256 &times; 256 RGB
+          </div>
+        </div>
+
+        <!-- Telemetry & System Provenance Table -->
+        <div class="mt-4 px-2">
+          <h3 class="text-xs uppercase tracking-wider font-semibold text-slate-400">Specimen & Inference Metadata</h3>
+          <dl class="mt-2 divide-y divide-slate-800 text-xs">
+            <div class="py-2.5 flex justify-between items-center">
+              <dt class="text-slate-500">Uploaded Image Filename</dt>
+              <dd class="text-slate-200 font-mono truncate max-w-[200px]" title="{{ record.image_filename }}">{{ record.image_filename }}</dd>
+            </div>
+            <div class="py-2.5 flex justify-between items-center">
+              <dt class="text-slate-500">Source Type</dt>
+              <dd class="font-mono">
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold {% if record.source_type == 'WEB_UPLOAD' %}bg-sky-950 text-sky-400 border border-sky-800{% elif record.source_type == 'IOT_DEVICE' %}bg-amber-950 text-amber-300 border border-amber-800{% else %}bg-purple-950 text-purple-300 border border-purple-800{% endif %}">
+                  {{ record.get_source_type_display|default:record.source_type }}
+                </span>
+              </dd>
+            </div>
+            <div class="py-2.5 flex justify-between items-center">
+              <dt class="text-slate-500">Model Version</dt>
+              <dd class="text-slate-200 font-mono font-semibold">{{ record.model_version }}</dd>
+            </div>
+            <div class="py-2.5 flex justify-between items-center">
+              <dt class="text-slate-500">Processing Time</dt>
+              <dd class="text-sky-400 font-mono font-semibold">{{ record.latency_ms }} ms</dd>
+            </div>
+            <div class="py-2.5 flex justify-between items-center">
+              <dt class="text-slate-500">Analyzed Timestamp</dt>
+              <dd class="text-slate-300 font-mono">{{ record.created_at|date:"Y-m-d H:i:s" }} UTC</dd>
+            </div>
+            <div class="py-2.5 flex justify-between items-center">
+              <dt class="text-slate-500">Specimen File Size</dt>
+              <dd class="text-slate-300 font-mono">{{ record.image_size_kb }} KB</dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+
+      <!-- Optional IoT Device Telemetry (if available) -->
+      {% if record.device_id or record.temperature is not None or record.humidity is not None %}
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+        <h3 class="text-sm font-semibold text-white mb-2 flex items-center">
+          <svg class="w-4 h-4 mr-2 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          Collocated IoT Edge Telemetry
+        </h3>
+        <dl class="divide-y divide-slate-800 text-xs">
+          {% if record.device_id %}
+          <div class="py-2 flex justify-between">
+            <dt class="text-slate-500">Device Hardware ID</dt>
+            <dd class="text-slate-200 font-mono">{{ record.device_id }}</dd>
+          </div>
+          {% endif %}
+          {% if record.temperature is not None %}
+          <div class="py-2 flex justify-between">
+            <dt class="text-slate-500">Ground Temperature</dt>
+            <dd class="text-amber-400 font-mono">{{ record.temperature }} &deg;C</dd>
+          </div>
+          {% endif %}
+          {% if record.humidity is not None %}
+          <div class="py-2 flex justify-between">
+            <dt class="text-slate-500">Relative Humidity</dt>
+            <dd class="text-sky-400 font-mono">{{ record.humidity }}%</dd>
+          </div>
+          {% endif %}
+          {% if record.latitude and record.longitude %}
+          <div class="py-2 flex justify-between">
+            <dt class="text-slate-500">Coordinates</dt>
+            <dd class="text-slate-200 font-mono">{{ record.latitude }}, {{ record.longitude }}</dd>
+          </div>
+          {% endif %}
+        </dl>
+      </div>
+      {% endif %}
+
+      <!-- Researcher Notes Card -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+        <h3 class="text-sm font-semibold text-white mb-2 flex items-center">
+          <svg class="w-4 h-4 mr-2 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+          Researcher Observation Notes
+        </h3>
+        <p class="text-xs text-slate-400 mb-4">Annotate ground-truth observations, sensor correlations, or meteorological conditions for this capture.</p>
+
+        <form method="POST" action="{% url 'predictions:detail' record.pk %}" class="space-y-4">
+          {% csrf_token %}
+          <textarea name="user_notes" rows="4" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-3 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 transition" placeholder="Add field notes, weather station readings, or visual confirmation...">{{ record.user_notes }}</textarea>
+          <div class="flex justify-end">
+            <button type="submit" class="px-4 py-2 rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-medium text-xs transition">
+              Save Notes
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Delete Record Danger Zone -->
+      <div class="bg-rose-950/20 border border-rose-900/40 rounded-2xl p-6">
+        <h3 class="text-sm font-semibold text-rose-400 mb-1">Delete Record</h3>
+        <p class="text-xs text-slate-400 mb-4">Permanently remove this prediction and its associated cloud specimen from the database and media repository.</p>
+        <form method="POST" action="{% url 'predictions:delete' record.pk %}" onsubmit="return confirm('Are you sure you want to permanently delete this prediction? This action cannot be undone.');">
+          {% csrf_token %}
+          <button type="submit" class="inline-flex items-center px-4 py-2 rounded-lg bg-rose-600/80 hover:bg-rose-600 text-white font-medium text-xs transition">
+            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            Delete Prediction Record
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Right Column: Model Inference Verdict & Analysis (7 cols) -->
+    <div class="lg:col-span-7 space-y-6">
+      <!-- Verdict Card -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+        <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+          <div>
+            <span class="text-xs uppercase tracking-wider font-semibold text-slate-400">Classified Prediction</span>
+            <div class="mt-1 flex items-center space-x-3">
+              <h2 class="text-2xl font-extrabold text-white">{{ record.display_name }}</h2>
+              {% if record.predicted_class == 'Low_to_Medium_Rain' %}
+              <span class="px-3 py-1 rounded-full text-xs font-semibold bg-amber-950 text-amber-300 border border-amber-800">Class 0</span>
+              {% elif record.predicted_class == 'Medium_to_Heavy_Rain' %}
+              <span class="px-3 py-1 rounded-full text-xs font-semibold bg-rose-950 text-rose-300 border border-rose-800">Class 1</span>
+              {% else %}
+              <span class="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-950 text-emerald-300 border border-emerald-800">Class 2</span>
+              {% endif %}
+            </div>
+          </div>
+          <div class="text-right">
+            <span class="text-xs uppercase tracking-wider font-semibold text-slate-400">Confidence Score</span>
+            <div class="text-3xl font-extrabold text-sky-400 font-mono">{{ record.confidence_percent }}%</div>
+          </div>
+        </div>
+
+        <!-- Confidence Gauge Bar -->
+        <div class="mt-6">
+          <div class="flex justify-between text-xs text-slate-400 mb-1">
+            <span>Certainty Level</span>
+            <span>{% if record.confidence >= 0.7 %}High Confidence{% elif record.confidence >= 0.5 %}Moderate Certainty{% else %}Borderline Certainty{% endif %}</span>
+          </div>
+          <div class="w-full bg-slate-950 rounded-full h-3 overflow-hidden border border-slate-800"
+               role="progressbar" aria-valuenow="{{ record.confidence_percent }}" aria-valuemin="0" aria-valuemax="100" aria-label="Confidence Score">
+            <div class="h-full {% if record.confidence >= 0.7 %}bg-gradient-to-r from-sky-500 to-indigo-500{% elif record.confidence >= 0.5 %}bg-amber-400{% else %}bg-rose-500{% endif %} rounded-full" style="width: {{ record.confidence_percent }}%"></div>
+          </div>
+        </div>
+
+        <!-- Full Probability Distribution -->
+        <div class="mt-6 space-y-3">
+          <h4 class="text-xs font-semibold uppercase tracking-wider text-slate-400">Probability Distribution</h4>
+
+          <!-- Low to Medium -->
+          <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80">
+            <div class="flex justify-between items-center text-xs mb-1.5">
+              <span class="text-slate-300 font-medium flex items-center">
+                <span class="w-2.5 h-2.5 rounded-full bg-amber-400 mr-2"></span>
+                Low to Medium Rain (Class 0)
+              </span>
+              <span class="font-mono text-slate-200 font-bold">{{ record.prob_low_pct }}% ({{ record.low_to_medium_probability|floatformat:4 }})</span>
+            </div>
+            <div class="w-full bg-slate-900 rounded-full h-2 overflow-hidden">
+              <div class="bg-amber-400 h-full rounded-full" style="width: {{ record.prob_low_pct }}%"></div>
+            </div>
+          </div>
+
+          <!-- Medium to Heavy -->
+          <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80">
+            <div class="flex justify-between items-center text-xs mb-1.5">
+              <span class="text-slate-300 font-medium flex items-center">
+                <span class="w-2.5 h-2.5 rounded-full bg-rose-400 mr-2"></span>
+                Medium to Heavy Rain (Class 1)
+              </span>
+              <span class="font-mono text-slate-200 font-bold">{{ record.prob_med_pct }}% ({{ record.medium_to_heavy_probability|floatformat:4 }})</span>
+            </div>
+            <div class="w-full bg-slate-900 rounded-full h-2 overflow-hidden">
+              <div class="bg-rose-500 h-full rounded-full" style="width: {{ record.prob_med_pct }}%"></div>
+            </div>
+          </div>
+
+          <!-- No to Low -->
+          <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80">
+            <div class="flex justify-between items-center text-xs mb-1.5">
+              <span class="text-slate-300 font-medium flex items-center">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 mr-2"></span>
+                No to Low Rain (Class 2)
+              </span>
+              <span class="font-mono text-slate-200 font-bold">{{ record.prob_no_pct }}% ({{ record.no_to_low_probability|floatformat:4 }})</span>
+            </div>
+            <div class="w-full bg-slate-900 rounded-full h-2 overflow-hidden">
+              <div class="bg-emerald-400 h-full rounded-full" style="width: {{ record.prob_no_pct }}%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Meteorological Advisory Panel -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+        <h3 class="text-sm font-semibold text-white mb-3 flex items-center">
+          <svg class="w-4 h-4 mr-2 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          Meteorological Assessment & Cloud Typology
+        </h3>
+        
+        {% if record.predicted_class == 'Low_to_Medium_Rain' %}
+        <div class="text-xs text-slate-300 space-y-2">
+          <p>
+            The model identified cloud texture and optical depth characteristic of <strong>Altostratus (As)</strong>, <strong>Stratocumulus (Sc)</strong>, or <strong>Nimbostratus (Ns)</strong> formations. These cloud regimes generate light-to-moderate sustained precipitation or intermittent drizzle.
+          </p>
+          <div class="p-3 bg-amber-950/30 border border-amber-900/40 rounded-lg text-amber-200">
+            <strong>Operational Advisory:</strong> Steady precipitation likely. Maintain drainage monitoring and moderate ground operations precaution.
+          </div>
+        </div>
+        {% elif record.predicted_class == 'Medium_to_Heavy_Rain' %}
+        <div class="text-xs text-slate-300 space-y-2">
+          <p>
+            The model identified deep convective vertical features and dark optical bases characteristic of <strong>Cumulonimbus (Cb)</strong>, mature <strong>Cumulus congestus</strong>, or dense <strong>Cirrostratus thick (Ct)</strong> formations. These formations are associated with vigorous updrafts and heavy rainfall.
+          </p>
+          <div class="p-3 bg-rose-950/30 border border-rose-900/40 rounded-lg text-rose-200">
+            <strong>Operational Advisory:</strong> High localized downpour risk, potential wind gusts or localized flash flooding. Alert outdoor field teams.
+          </div>
+        </div>
+        {% else %}
+        <div class="text-xs text-slate-300 space-y-2">
+          <p>
+            The model identified high, thin, or scattered cloud features characteristic of <strong>Cirrus (Ci)</strong>, <strong>Cirrocumulus (Cc)</strong>, or fair-weather <strong>Altocumulus (Ac)</strong>. Optical transmittance is high, indicating dry mid-to-upper atmospheric conditions.
+          </p>
+          <div class="p-3 bg-emerald-950/30 border border-emerald-900/40 rounded-lg text-emerald-200">
+            <strong>Operational Advisory:</strong> Minimal or no immediate precipitation expected. Conditions favorable for open-air operations.
+          </div>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Scientific Transparency Box -->
+      <div class="bg-slate-950/60 border border-slate-800/80 rounded-xl p-4 text-xs text-slate-400">
+        <span class="text-sky-400 font-semibold uppercase tracking-wider block mb-1">Scientific Integrity & Verification Notice</span>
+        Predictions are generated by an Xception CNN trained on 2,543 cloud sky images and verified against an independent 381-sample test set (58.27% accuracy, 56.60% macro F1). Results serve as probabilistic guidance, not certified Doppler radar measurements.
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

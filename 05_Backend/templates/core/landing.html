@@ -1,0 +1,482 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="space-y-28 py-6">
+
+  <!-- ================================================================= -->
+  <!-- HERO SECTION -->
+  <!-- ================================================================= -->
+  <section class="relative text-center max-w-5xl mx-auto space-y-8 pt-6">
+    <!-- Ambient ambient glow backdrop -->
+    <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-[32rem] h-96 bg-gradient-to-tr from-sky-500/20 via-indigo-500/15 to-transparent rounded-full blur-3xl pointer-events-none -z-10"></div>
+    <div class="absolute top-1/4 left-1/4 -translate-x-1/2 w-72 h-72 bg-sky-400/10 rounded-full blur-3xl pointer-events-none -z-10"></div>
+
+    <!-- Academic Badge -->
+    <div class="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-slate-900/90 border border-slate-800 text-xs text-slate-300 shadow-xl shadow-sky-500/5 backdrop-blur-md">
+      <span class="inline-block w-2 h-2 rounded-full bg-sky-400 animate-pulse"></span>
+      <span class="font-bold text-sky-400 tracking-wider uppercase font-mono">Master's Degree Project</span>
+      <span class="text-slate-600">&bull;</span>
+      <span class="text-slate-300 font-medium">AI &bull; Cloud Computing &bull; Future IoT</span>
+    </div>
+
+    <!-- Main Title & Tagline -->
+    <div class="space-y-3">
+      <h1 class="text-5xl sm:text-7xl font-extrabold text-white tracking-tight leading-[1.1] font-heading">
+        SKYsense <span class="bg-gradient-to-r from-sky-400 via-sky-300 to-indigo-400 bg-clip-text text-transparent">AI</span>
+      </h1>
+      <p class="text-xl sm:text-3xl font-bold text-slate-200 tracking-tight">
+        AI-Powered Cloud &amp; Rainfall Intelligence
+      </p>
+    </div>
+
+    <!-- Subtitle -->
+    <p class="text-base sm:text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed">
+      Analyze cloud imagery using deep learning to estimate rainfall conditions.
+    </p>
+
+    <!-- Hero CTA Buttons -->
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
+      <a href="{% url 'predictions:predict' %}" class="w-full sm:w-auto px-7 py-4 rounded-xl font-semibold text-base bg-gradient-to-r from-sky-500 to-indigo-600 text-white shadow-xl shadow-sky-500/25 hover:from-sky-400 hover:to-indigo-500 transition-all duration-200 hover:scale-[1.02] flex items-center justify-center gap-2.5">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 00-9.78 2.096A4.001 4.001 0 003 15z"/>
+        </svg>
+        Analyze an Image
+      </a>
+      <a href="{% url 'predictions:demo' %}" class="w-full sm:w-auto px-7 py-4 rounded-xl font-semibold text-base bg-sky-500/10 border border-sky-500/30 text-sky-300 hover:bg-sky-500/20 hover:border-sky-400 transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-sky-500/10">
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        Live Demo Mode
+      </a>
+      <a href="{% url 'core:dashboard' %}" class="w-full sm:w-auto px-7 py-4 rounded-xl font-semibold text-base bg-slate-900/80 border border-slate-700/80 text-slate-200 hover:text-white hover:border-slate-500 transition-all duration-200 hover:bg-slate-800/80 flex items-center justify-center gap-2.5 backdrop-blur-sm">
+        <svg class="w-5 h-5 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+        </svg>
+        Explore Dashboard
+      </a>
+    </div>
+
+    <!-- Quick Stat Badges -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-10 text-left">
+      <div class="bg-slate-900/60 border border-slate-800/80 p-5 rounded-2xl backdrop-blur-sm shadow-sm">
+        <span class="text-xs uppercase tracking-wider text-slate-400 font-mono">Dataset Size</span>
+        <div class="text-2xl font-bold text-white mt-1 font-heading">2,543</div>
+        <p class="text-xs text-sky-400 mt-0.5 font-medium">CCSN Cloud Images</p>
+      </div>
+      <div class="bg-slate-900/60 border border-slate-800/80 p-5 rounded-2xl backdrop-blur-sm shadow-sm">
+        <span class="text-xs uppercase tracking-wider text-slate-400 font-mono">Deep Architecture</span>
+        <div class="text-2xl font-bold text-white mt-1 font-heading">Xception</div>
+        <p class="text-xs text-indigo-400 mt-0.5 font-medium">20.8M Parameters</p>
+      </div>
+      <div class="bg-slate-900/60 border border-slate-800/80 p-5 rounded-2xl backdrop-blur-sm shadow-sm">
+        <span class="text-xs uppercase tracking-wider text-slate-400 font-mono">Rainfall Categories</span>
+        <div class="text-2xl font-bold text-white mt-1 font-heading">3 Tiers</div>
+        <p class="text-xs text-emerald-400 mt-0.5 font-medium">Calibrated Classes</p>
+      </div>
+      <div class="bg-slate-900/60 border border-slate-800/80 p-5 rounded-2xl backdrop-blur-sm shadow-sm">
+        <span class="text-xs uppercase tracking-wider text-slate-400 font-mono">Test Accuracy</span>
+        <div class="text-2xl font-bold text-white mt-1 font-heading">58.27%</div>
+        <p class="text-xs text-purple-400 mt-0.5 font-medium">Out-of-Sample Benchmark</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================= -->
+  <!-- 1. HOW SKYSENSE AI WORKS -->
+  <!-- ================================================================= -->
+  <section class="space-y-10 max-w-6xl mx-auto">
+    <div class="text-center max-w-2xl mx-auto space-y-2">
+      <div class="inline-flex items-center px-3 py-1 rounded-full bg-sky-500/10 border border-sky-500/20 text-xs font-mono text-sky-400 uppercase tracking-wider">
+        Operational Pipeline
+      </div>
+      <h2 class="text-3xl font-extrabold text-white tracking-tight">How SKYsense AI Works</h2>
+      <p class="text-sm text-slate-400">
+        A seamless 5-stage deep learning pipeline converting ground-based cloud imagery into probabilistic rainfall predictions.
+      </p>
+    </div>
+
+    <!-- Sequential Pipeline Flow -->
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-4 relative">
+      <!-- Step 1: Image -->
+      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 text-center space-y-3 relative group hover:border-sky-500/40 transition shadow-lg">
+        <div class="w-12 h-12 rounded-xl bg-sky-500/10 border border-sky-500/20 text-sky-400 flex items-center justify-center mx-auto text-lg font-bold font-mono">
+          01
+        </div>
+        <h3 class="text-base font-bold text-white">Image</h3>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Ground-based sky-facing cloud capture uploaded via web or ingested via edge sensors.
+        </p>
+        <span class="inline-block px-2 py-0.5 rounded text-[10px] font-mono bg-slate-950 text-slate-400 border border-slate-800">JPG &bull; PNG</span>
+      </div>
+
+      <!-- Connector 1 -->
+      <div class="hidden md:flex items-center justify-center -mx-2 z-10 text-slate-600">
+        <svg class="w-6 h-6 text-sky-500/60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+      </div>
+
+      <!-- Step 2: AI preprocessing -->
+      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 text-center space-y-3 relative group hover:border-sky-500/40 transition shadow-lg">
+        <div class="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center mx-auto text-lg font-bold font-mono">
+          02
+        </div>
+        <h3 class="text-base font-bold text-white">AI Preprocessing</h3>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Spatial resizing to 256&times;256 RGB, validation against corruption, and [0.0, 1.0] tensor normalization.
+        </p>
+        <span class="inline-block px-2 py-0.5 rounded text-[10px] font-mono bg-slate-950 text-indigo-300 border border-slate-800">256&times;256 RGB</span>
+      </div>
+
+      <!-- Connector 2 -->
+      <div class="hidden md:flex items-center justify-center -mx-2 z-10 text-slate-600">
+        <svg class="w-6 h-6 text-indigo-500/60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+      </div>
+
+      <!-- Step 3: Xception model -->
+      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 text-center space-y-3 relative group hover:border-sky-500/40 transition shadow-lg">
+        <div class="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center mx-auto text-lg font-bold font-mono">
+          03
+        </div>
+        <h3 class="text-base font-bold text-white">Xception Model</h3>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Depthwise separable convolutions extract high-level cloud density and texture features.
+        </p>
+        <span class="inline-block px-2 py-0.5 rounded text-[10px] font-mono bg-slate-950 text-purple-300 border border-slate-800">20.8M Weights</span>
+      </div>
+
+      <!-- Connector 3 -->
+      <div class="hidden md:flex items-center justify-center -mx-2 z-10 text-slate-600">
+        <svg class="w-6 h-6 text-purple-500/60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+      </div>
+
+      <!-- Step 4: Rainfall classification -->
+      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 text-center space-y-3 relative group hover:border-sky-500/40 transition shadow-lg">
+        <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center mx-auto text-lg font-bold font-mono">
+          04
+        </div>
+        <h3 class="text-base font-bold text-white">Rainfall Classification</h3>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Softmax layer computes calibrated probability distribution across 3 precipitation tiers.
+        </p>
+        <span class="inline-block px-2 py-0.5 rounded text-[10px] font-mono bg-slate-950 text-amber-300 border border-slate-800">Softmax &bull; 3 Classes</span>
+      </div>
+
+      <!-- Connector 4 -->
+      <div class="hidden md:flex items-center justify-center -mx-2 z-10 text-slate-600">
+        <svg class="w-6 h-6 text-amber-500/60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+      </div>
+
+      <!-- Step 5: Interactive dashboard -->
+      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 text-center space-y-3 relative group hover:border-sky-500/40 transition shadow-lg">
+        <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto text-lg font-bold font-mono">
+          05
+        </div>
+        <h3 class="text-base font-bold text-white">Interactive Dashboard</h3>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Presents real-time telemetry, confidence meters, probability bars, and risk advisories.
+        </p>
+        <span class="inline-block px-2 py-0.5 rounded text-[10px] font-mono bg-slate-950 text-emerald-300 border border-slate-800">Chart.js Visuals</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================= -->
+  <!-- 2. AI CAPABILITIES -->
+  <!-- ================================================================= -->
+  <section class="space-y-10 max-w-6xl mx-auto">
+    <div class="text-center max-w-2xl mx-auto space-y-2">
+      <div class="inline-flex items-center px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-xs font-mono text-indigo-400 uppercase tracking-wider">
+        Core Intelligence
+      </div>
+      <h2 class="text-3xl font-extrabold text-white tracking-tight">AI Capabilities</h2>
+      <p class="text-sm text-slate-400">
+        Specialized machine learning features tailored for ground-level atmospheric intelligence.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <!-- Capability 1: Image analysis -->
+      <div class="bg-slate-900/80 border border-slate-800 p-6 rounded-2xl space-y-3 hover:border-sky-500/40 transition shadow-lg">
+        <div class="w-10 h-10 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        </div>
+        <h3 class="text-lg font-bold text-white">Image Analysis</h3>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Deep visual inspection extracting cloud optical thickness, texture gradients, luminance, and vertical development patterns.
+        </p>
+      </div>
+
+      <!-- Capability 2: Rainfall classification -->
+      <div class="bg-slate-900/80 border border-slate-800 p-6 rounded-2xl space-y-3 hover:border-indigo-500/40 transition shadow-lg">
+        <div class="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+        </div>
+        <h3 class="text-lg font-bold text-white">Rainfall Classification</h3>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Categorizes cloud specimens into 3 discrete meteorological regimes: Low to Medium Rain, Medium to Heavy Rain, and No to Low Rain.
+        </p>
+      </div>
+
+      <!-- Capability 3: Confidence estimation -->
+      <div class="bg-slate-900/80 border border-slate-800 p-6 rounded-2xl space-y-3 hover:border-purple-500/40 transition shadow-lg">
+        <div class="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <h3 class="text-lg font-bold text-white">Confidence Estimation</h3>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Computes exact Softmax probability distributions, quantifying prediction certainty to prevent overconfident forecasts during ambiguous regimes.
+        </p>
+      </div>
+
+      <!-- Capability 4: Historical analysis -->
+      <div class="bg-slate-900/80 border border-slate-800 p-6 rounded-2xl space-y-3 hover:border-emerald-500/40 transition shadow-lg">
+        <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <h3 class="text-lg font-bold text-white">Historical Analysis</h3>
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Searchable, filterable archive of past predictions with date ranges, classification filters, and latency auditing.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================= -->
+  <!-- 3. TECHNOLOGY STACK -->
+  <!-- ================================================================= -->
+  <section class="space-y-10 max-w-6xl mx-auto">
+    <div class="text-center max-w-2xl mx-auto space-y-2">
+      <div class="inline-flex items-center px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-xs font-mono text-emerald-400 uppercase tracking-wider">
+        Engineering Foundation
+      </div>
+      <h2 class="text-3xl font-extrabold text-white tracking-tight">Technology Stack</h2>
+      <p class="text-sm text-slate-400">
+        Engineered with industry-standard, production-proven tools across deep learning, backend, and interface layers.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-4">
+      <!-- Python -->
+      <div class="bg-slate-900/70 border border-slate-800 p-5 rounded-2xl text-center space-y-2 hover:border-sky-500/40 transition shadow-sm">
+        <div class="w-10 h-10 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400 mx-auto font-mono font-bold text-xs">
+          Py
+        </div>
+        <h4 class="text-sm font-bold text-white">Python</h4>
+        <p class="text-[11px] text-slate-400">Core Engine</p>
+      </div>
+
+      <!-- TensorFlow/Keras -->
+      <div class="bg-slate-900/70 border border-slate-800 p-5 rounded-2xl text-center space-y-2 hover:border-amber-500/40 transition shadow-sm">
+        <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 mx-auto font-mono font-bold text-xs">
+          TF
+        </div>
+        <h4 class="text-sm font-bold text-white">TensorFlow / Keras</h4>
+        <p class="text-[11px] text-slate-400">Deep Learning</p>
+      </div>
+
+      <!-- Xception -->
+      <div class="bg-slate-900/70 border border-slate-800 p-5 rounded-2xl text-center space-y-2 hover:border-indigo-500/40 transition shadow-sm">
+        <div class="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 mx-auto font-mono font-bold text-xs">
+          XC
+        </div>
+        <h4 class="text-sm font-bold text-white">Xception</h4>
+        <p class="text-[11px] text-slate-400">CNN Backbone</p>
+      </div>
+
+      <!-- Django -->
+      <div class="bg-slate-900/70 border border-slate-800 p-5 rounded-2xl text-center space-y-2 hover:border-emerald-500/40 transition shadow-sm">
+        <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 mx-auto font-mono font-bold text-xs">
+          Dj
+        </div>
+        <h4 class="text-sm font-bold text-white">Django</h4>
+        <p class="text-[11px] text-slate-400">Web Backend</p>
+      </div>
+
+      <!-- SQLite -->
+      <div class="bg-slate-900/70 border border-slate-800 p-5 rounded-2xl text-center space-y-2 hover:border-sky-500/40 transition shadow-sm">
+        <div class="w-10 h-10 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400 mx-auto font-mono font-bold text-xs">
+          SQL
+        </div>
+        <h4 class="text-sm font-bold text-white">SQLite</h4>
+        <p class="text-[11px] text-slate-400">ORM Database</p>
+      </div>
+
+      <!-- JavaScript -->
+      <div class="bg-slate-900/70 border border-slate-800 p-5 rounded-2xl text-center space-y-2 hover:border-amber-500/40 transition shadow-sm">
+        <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 mx-auto font-mono font-bold text-xs">
+          JS
+        </div>
+        <h4 class="text-sm font-bold text-white">JavaScript</h4>
+        <p class="text-[11px] text-slate-400">Client Logic</p>
+      </div>
+
+      <!-- Chart.js -->
+      <div class="bg-slate-900/70 border border-slate-800 p-5 rounded-2xl text-center space-y-2 hover:border-rose-500/40 transition shadow-sm">
+        <div class="w-10 h-10 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 mx-auto font-mono font-bold text-xs">
+          CJ
+        </div>
+        <h4 class="text-sm font-bold text-white">Chart.js</h4>
+        <p class="text-[11px] text-slate-400">Data Visuals</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================= -->
+  <!-- 4. RESEARCH PILLARS -->
+  <!-- ================================================================= -->
+  <section class="space-y-10 max-w-6xl mx-auto">
+    <div class="text-center max-w-2xl mx-auto space-y-2">
+      <div class="inline-flex items-center px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-xs font-mono text-purple-400 uppercase tracking-wider">
+        Academic Rigor
+      </div>
+      <h2 class="text-3xl font-extrabold text-white tracking-tight">Research &amp; Methodology</h2>
+      <p class="text-sm text-slate-400">
+        Scientific foundations underpinning dataset curation, neural network training, and empirical verification.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <!-- Pillar 1: Dataset -->
+      <div class="bg-slate-900/80 border border-slate-800 p-6 rounded-2xl space-y-3 hover:border-sky-500/40 transition shadow-lg flex flex-col justify-between">
+        <div class="space-y-2">
+          <span class="text-sky-400 font-mono text-xs uppercase tracking-wider font-bold">Pillar 01</span>
+          <h3 class="text-lg font-bold text-white">Dataset</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            CCSN database featuring 2,543 images across 11 cloud types consolidated into 3 calibrated rainfall likelihood categories with stratified 70/15/15 partitions.
+          </p>
+        </div>
+        <a href="{% url 'core:model_performance' %}" class="inline-flex items-center text-xs font-semibold text-sky-400 hover:text-sky-300 pt-2 transition">
+          View Distribution &rarr;
+        </a>
+      </div>
+
+      <!-- Pillar 2: Model -->
+      <div class="bg-slate-900/80 border border-slate-800 p-6 rounded-2xl space-y-3 hover:border-indigo-500/40 transition shadow-lg flex flex-col justify-between">
+        <div class="space-y-2">
+          <span class="text-indigo-400 font-mono text-xs uppercase tracking-wider font-bold">Pillar 02</span>
+          <h3 class="text-lg font-bold text-white">Model Architecture</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Xception transfer learning backbone leveraging 36 depthwise separable convolutional stages, GlobalAveragePooling2D, and 40% Dropout regularization.
+          </p>
+        </div>
+        <a href="{% url 'core:model_info' %}" class="inline-flex items-center text-xs font-semibold text-indigo-400 hover:text-indigo-300 pt-2 transition">
+          View Architecture &rarr;
+        </a>
+      </div>
+
+      <!-- Pillar 3: Evaluation -->
+      <div class="bg-slate-900/80 border border-slate-800 p-6 rounded-2xl space-y-3 hover:border-emerald-500/40 transition shadow-lg flex flex-col justify-between">
+        <div class="space-y-2">
+          <span class="text-emerald-400 font-mono text-xs uppercase tracking-wider font-bold">Pillar 03</span>
+          <h3 class="text-lg font-bold text-white">Evaluation</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Unseen 381-sample test split benchmark achieving 58.27% accuracy, 61.23% macro precision, and 56.60% macro F1 with verified confusion matrix.
+          </p>
+        </div>
+        <a href="{% url 'core:model_performance' %}" class="inline-flex items-center text-xs font-semibold text-emerald-400 hover:text-emerald-300 pt-2 transition">
+          View Benchmark &rarr;
+        </a>
+      </div>
+
+      <!-- Pillar 4: Future IoT Integration -->
+      <div class="bg-slate-900/80 border border-slate-800 p-6 rounded-2xl space-y-3 hover:border-amber-500/40 transition shadow-lg flex flex-col justify-between">
+        <div class="space-y-2">
+          <span class="text-amber-400 font-mono text-xs uppercase tracking-wider font-bold">Pillar 04</span>
+          <h3 class="text-lg font-bold text-white">Future IoT Integration</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Pre-wired database schema and API endpoints designed to ingest edge camera telemetry (Raspberry Pi/ESP32) and collocated weather readings.
+          </p>
+        </div>
+        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono bg-amber-500/10 text-amber-300 border border-amber-500/20 w-max">
+          Future Work
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================= -->
+  <!-- 5. FUTURE ARCHITECTURE (CLEARLY LABELED AS FUTURE WORK) -->
+  <!-- ================================================================= -->
+  <section class="space-y-8 max-w-6xl mx-auto">
+    <div class="bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800 rounded-3xl p-8 md:p-12 shadow-2xl relative overflow-hidden space-y-8">
+      <!-- Glow effect -->
+      <div class="absolute -right-20 -bottom-20 w-80 h-80 bg-amber-500/5 rounded-full blur-3xl pointer-events-none"></div>
+
+      <!-- Section Header with FUTURE WORK Badge -->
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-800/80 pb-6">
+        <div>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="px-3 py-1 rounded-full text-xs font-bold font-mono uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/40">
+              Future Work
+            </span>
+            <span class="text-xs text-slate-500 font-mono">Architectural Roadmap</span>
+          </div>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Future Architecture</h2>
+          <p class="text-sm text-slate-400 mt-1">
+            Planned end-to-end edge-to-cloud automated observation architecture.
+          </p>
+        </div>
+        <div class="text-xs text-slate-400 max-w-xs text-left md:text-right font-mono">
+          Edge Hardware Integration Blueprint
+        </div>
+      </div>
+
+      <!-- Visual Sequence Flow -->
+      <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+        <!-- Node 1: Cloud image -->
+        <div class="bg-slate-950 p-5 rounded-2xl border border-slate-800/80 space-y-2 text-center relative group">
+          <div class="w-10 h-10 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-sky-400 mx-auto">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 00-9.78 2.096A4.001 4.001 0 003 15z"/></svg>
+          </div>
+          <h4 class="text-sm font-bold text-white">Cloud Image</h4>
+          <p class="text-[11px] text-slate-400 leading-normal">Natural sky atmospheric formations</p>
+        </div>
+
+        <!-- Node 2: IoT camera/device -->
+        <div class="bg-slate-950 p-5 rounded-2xl border border-amber-500/30 space-y-2 text-center relative group">
+          <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 mx-auto">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+          </div>
+          <div class="flex items-center justify-center gap-1">
+            <h4 class="text-sm font-bold text-white">IoT Camera / Device</h4>
+          </div>
+          <p class="text-[11px] text-slate-400 leading-normal">Raspberry Pi &bull; ESP32 &bull; Sensors</p>
+          <span class="inline-block px-1.5 py-0.5 rounded text-[9px] font-mono bg-amber-500/10 text-amber-300 border border-amber-500/20">Future Work</span>
+        </div>
+
+        <!-- Node 3: API -->
+        <div class="bg-slate-950 p-5 rounded-2xl border border-slate-800/80 space-y-2 text-center relative group">
+          <div class="w-10 h-10 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-indigo-400 mx-auto">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          </div>
+          <h4 class="text-sm font-bold text-white">API</h4>
+          <p class="text-[11px] text-slate-400 leading-normal">REST Ingestion: <code class="font-mono text-sky-400 text-[10px]">/api/predict/</code></p>
+        </div>
+
+        <!-- Node 4: AI model -->
+        <div class="bg-slate-950 p-5 rounded-2xl border border-slate-800/80 space-y-2 text-center relative group">
+          <div class="w-10 h-10 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-purple-400 mx-auto">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          </div>
+          <h4 class="text-sm font-bold text-white">AI Model</h4>
+          <p class="text-[11px] text-slate-400 leading-normal">Xception deep inference service</p>
+        </div>
+
+        <!-- Node 5: SKYsense dashboard -->
+        <div class="bg-slate-950 p-5 rounded-2xl border border-slate-800/80 space-y-2 text-center relative group">
+          <div class="w-10 h-10 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-emerald-400 mx-auto">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+          </div>
+          <h4 class="text-sm font-bold text-white">SKYsense Dashboard</h4>
+          <p class="text-[11px] text-slate-400 leading-normal">Telemetry &bull; History &bull; Alerts</p>
+        </div>
+      </div>
+
+      <!-- Roadmap Explanation Banner -->
+      <div class="p-4 rounded-xl bg-slate-950/80 border border-amber-500/20 text-xs text-slate-400 leading-relaxed">
+        <strong class="text-amber-300">Forward Compatibility Notice:</strong>
+        The database schema incorporates optional fields (<code class="text-sky-300 font-mono">device_id</code>, <code class="text-sky-300 font-mono">latitude</code>, <code class="text-sky-300 font-mono">longitude</code>, <code class="text-sky-300 font-mono">temperature</code>, <code class="text-sky-300 font-mono">humidity</code>) pre-configured to receive automated uploads from field-deployed IoT stations as future research work.
+      </div>
+    </div>
+  </section>
+
+</div>
+{% endblock %}

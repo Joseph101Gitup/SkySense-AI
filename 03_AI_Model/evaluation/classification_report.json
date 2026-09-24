@@ -1,0 +1,33 @@
+{
+  "Low_to_Medium_Rain": {
+    "precision": 0.54,
+    "recall": 0.72,
+    "f1-score": 0.6171428571428572,
+    "support": 150
+  },
+  "Medium_to_Heavy_Rain": {
+    "precision": 0.6923076923076923,
+    "recall": 0.3870967741935484,
+    "f1-score": 0.496551724137931,
+    "support": 93
+  },
+  "No_to_Low_Rain": {
+    "precision": 0.6046511627906976,
+    "recall": 0.5652173913043478,
+    "f1-score": 0.5842696629213482,
+    "support": 138
+  },
+  "accuracy": 0.5826771653543307,
+  "macro avg": {
+    "precision": 0.61231961836613,
+    "recall": 0.5574380551659653,
+    "f1-score": 0.5659880814007121,
+    "support": 381
+  },
+  "weighted avg": {
+    "precision": 0.6005944248024453,
+    "recall": 0.5826771653543307,
+    "f1-score": 0.575800399998431,
+    "support": 381
+  }
+}

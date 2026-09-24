@@ -1,0 +1,203 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+  <!-- Header -->
+  <div class="pb-6 border-b border-slate-800">
+    <div class="flex items-center space-x-2 text-sky-400 text-xs font-mono mb-1">
+      <span>TECHNICAL SPECIFICATION &bull; DEEP LEARNING BACKBONE</span>
+    </div>
+    <h1 class="text-3xl font-extrabold text-white tracking-tight">AI Model Architecture</h1>
+    <p class="text-slate-400 text-sm mt-1">Deep convolutional neural network architecture, transfer learning protocol, and classification specifications.</p>
+  </div>
+
+  <!-- Key Specs Grid -->
+  <div class="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+      <span class="text-slate-500 text-xs font-mono uppercase">Base Architecture</span>
+      <div class="text-white font-bold text-base mt-1">Xception</div>
+      <div class="text-[11px] text-slate-400 mt-0.5">36 Separable Conv layers</div>
+    </div>
+    <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+      <span class="text-slate-500 text-xs font-mono uppercase">Total Parameters</span>
+      <div class="text-white font-bold text-base mt-1">20,867,627</div>
+      <div class="text-[11px] text-slate-400 mt-0.5">~79.6 MB weights</div>
+    </div>
+    <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+      <span class="text-slate-500 text-xs font-mono uppercase">Input Tensor</span>
+      <div class="text-white font-bold text-base mt-1">256 &times; 256 &times; 3</div>
+      <div class="text-[11px] text-slate-400 mt-0.5">RGB &bull; Normalized [0, 1]</div>
+    </div>
+    <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+      <span class="text-slate-500 text-xs font-mono uppercase">Target Classes</span>
+      <div class="text-white font-bold text-base mt-1">3 Categories</div>
+      <div class="text-[11px] text-slate-400 mt-0.5">Softmax probability</div>
+    </div>
+  </div>
+
+  <!-- Architectural Diagram & Breakdown -->
+  <div class="mt-8 bg-slate-900 border border-slate-800 rounded-2xl p-6 md:p-8 shadow-xl">
+    <h2 class="text-lg font-bold text-white mb-4 flex items-center">
+      <svg class="w-5 h-5 mr-2 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/></svg>
+      Neural Pipeline Architecture
+    </h2>
+
+    <div class="space-y-4">
+      <!-- Layer 1 -->
+      <div class="flex items-center p-4 bg-slate-950 rounded-xl border border-slate-800">
+        <div class="w-10 h-10 rounded-lg bg-sky-950 border border-sky-800 flex items-center justify-center text-sky-400 font-mono font-bold text-xs mr-4 flex-shrink-0">
+          IN
+        </div>
+        <div class="flex-1">
+          <div class="flex justify-between items-center">
+            <h3 class="text-sm font-semibold text-white">Input Layer &amp; Rescaling</h3>
+            <span class="text-xs font-mono text-slate-400">[None, 256, 256, 3]</span>
+          </div>
+          <p class="text-xs text-slate-400 mt-1">Converts image to floating point tensor; rescales values from [0, 255] to [0.0, 1.0].</p>
+        </div>
+      </div>
+
+      <!-- Layer 2 -->
+      <div class="flex items-center p-4 bg-slate-950 rounded-xl border border-slate-800">
+        <div class="w-10 h-10 rounded-lg bg-indigo-950 border border-indigo-800 flex items-center justify-center text-indigo-400 font-mono font-bold text-xs mr-4 flex-shrink-0">
+          CNN
+        </div>
+        <div class="flex-1">
+          <div class="flex justify-between items-center">
+            <h3 class="text-sm font-semibold text-white">Xception Feature Extractor</h3>
+            <span class="text-xs font-mono text-slate-400">[None, 8, 8, 2048]</span>
+          </div>
+          <p class="text-xs text-slate-400 mt-1">36 depthwise separable convolutional layers organized into 14 modules with residual connections.</p>
+        </div>
+      </div>
+
+      <!-- Layer 3 -->
+      <div class="flex items-center p-4 bg-slate-950 rounded-xl border border-slate-800">
+        <div class="w-10 h-10 rounded-lg bg-purple-950 border border-purple-800 flex items-center justify-center text-purple-400 font-mono font-bold text-xs mr-4 flex-shrink-0">
+          GAP
+        </div>
+        <div class="flex-1">
+          <div class="flex justify-between items-center">
+            <h3 class="text-sm font-semibold text-white">GlobalAveragePooling2D</h3>
+            <span class="text-xs font-mono text-slate-400">[None, 2048]</span>
+          </div>
+          <p class="text-xs text-slate-400 mt-1">Aggregates spatial feature maps into a 2048-dimensional dense representation.</p>
+        </div>
+      </div>
+
+      <!-- Layer 4 -->
+      <div class="flex items-center p-4 bg-slate-950 rounded-xl border border-slate-800">
+        <div class="w-10 h-10 rounded-lg bg-amber-950 border border-amber-800 flex items-center justify-center text-amber-400 font-mono font-bold text-xs mr-4 flex-shrink-0">
+          DROP
+        </div>
+        <div class="flex-1">
+          <div class="flex justify-between items-center">
+            <h3 class="text-sm font-semibold text-white">Dropout Regularization (rate = 0.40)</h3>
+            <span class="text-xs font-mono text-slate-400">[None, 2048]</span>
+          </div>
+          <p class="text-xs text-slate-400 mt-1">Prevents overfitting on limited cloud specimens by randomly deactivating 40% of feature activations during training.</p>
+        </div>
+      </div>
+
+      <!-- Layer 5 -->
+      <div class="flex items-center p-4 bg-slate-950 rounded-xl border border-slate-800">
+        <div class="w-10 h-10 rounded-lg bg-emerald-950 border border-emerald-800 flex items-center justify-center text-emerald-400 font-mono font-bold text-xs mr-4 flex-shrink-0">
+          OUT
+        </div>
+        <div class="flex-1">
+          <div class="flex justify-between items-center">
+            <h3 class="text-sm font-semibold text-white">Dense Classification Head (Softmax)</h3>
+            <span class="text-xs font-mono text-slate-400">[None, 3]</span>
+          </div>
+          <p class="text-xs text-slate-400 mt-1">Computes normalized probability distribution across the 3 rainfall classes (sums to 1.0).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Class Typology & Meteorological Mapping Table -->
+  <div class="mt-8 bg-slate-900 border border-slate-800 rounded-2xl p-6 md:p-8 shadow-xl">
+    <h2 class="text-lg font-bold text-white mb-2">Class Taxonomy &amp; Cloud Regimes</h2>
+    <p class="text-xs text-slate-400 mb-6">How optical cloud features and meteorological genera correspond to the 3 target classes.</p>
+
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-xs text-slate-300">
+        <thead class="bg-slate-950 uppercase tracking-wider text-slate-400 border-b border-slate-800">
+          <tr>
+            <th class="px-4 py-3">Class Index</th>
+            <th class="px-4 py-3">Precipitation Category</th>
+            <th class="px-4 py-3">Associated Cloud Genera</th>
+            <th class="px-4 py-3">Visual Morphology</th>
+            <th class="px-4 py-3">Dataset Share</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-800">
+          <tr class="hover:bg-slate-800/40">
+            <td class="px-4 py-3 font-mono font-bold text-amber-400">0</td>
+            <td class="px-4 py-3 font-semibold text-white">Low_to_Medium_Rain</td>
+            <td class="px-4 py-3">Altostratus (As), Stratocumulus (Sc), Stratus (St), Nimbostratus (Ns)</td>
+            <td class="px-4 py-3 text-slate-400">Diffuse, greyish sheet, medium opacity, low-altitude continuous layer</td>
+            <td class="px-4 py-3 font-mono">1,004 (39.5%)</td>
+          </tr>
+          <tr class="hover:bg-slate-800/40">
+            <td class="px-4 py-3 font-mono font-bold text-rose-400">1</td>
+            <td class="px-4 py-3 font-semibold text-white">Medium_to_Heavy_Rain</td>
+            <td class="px-4 py-3">Cumulonimbus (Cb), Cumulus congestus (Cu), Cirrostratus thick (Ct)</td>
+            <td class="px-4 py-3 text-slate-400">Towering vertical development, dark low anvil base, high density</td>
+            <td class="px-4 py-3 font-mono">624 (24.5%)</td>
+          </tr>
+          <tr class="hover:bg-slate-800/40">
+            <td class="px-4 py-3 font-mono font-bold text-emerald-400">2</td>
+            <td class="px-4 py-3 font-semibold text-white">No_to_Low_Rain</td>
+            <td class="px-4 py-3">Cirrus (Ci), Cirrocumulus (Cc), Altocumulus (Ac), Cirrostratus thin (Cs)</td>
+            <td class="px-4 py-3 text-slate-400">High-altitude fibrous wisps, high optical transmittance, blue sky visible</td>
+            <td class="px-4 py-3 font-mono">915 (36.0%)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Model Artifacts & Edge Deployment -->
+  <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+      <div class="flex items-center space-x-3 mb-3">
+        <div class="p-2 rounded-lg bg-sky-950 border border-sky-800 text-sky-400">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>
+        </div>
+        <div>
+          <h3 class="text-sm font-bold text-white">Keras 3 Checkpoint</h3>
+          <span class="text-xs font-mono text-slate-400">best_xception_rainfall.keras</span>
+        </div>
+      </div>
+      <p class="text-xs text-slate-400 leading-relaxed">
+        Full precision (FP32) weights checkpoint saved with early stopping and model checkpoint callbacks based on validation loss. Used by the Django production backend.
+      </p>
+      <div class="mt-4 flex items-center justify-between text-xs font-mono text-slate-400 bg-slate-950 p-2.5 rounded-lg border border-slate-800">
+        <span>File Size: ~84 MB</span>
+        <span class="text-emerald-400">Active in Backend</span>
+      </div>
+    </div>
+
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+      <div class="flex items-center space-x-3 mb-3">
+        <div class="p-2 rounded-lg bg-purple-950 border border-purple-800 text-purple-400">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        </div>
+        <div>
+          <h3 class="text-sm font-bold text-white">TensorFlow Lite Edge Model</h3>
+          <span class="text-xs font-mono text-slate-400">xception_rainfall.tflite</span>
+        </div>
+      </div>
+      <p class="text-xs text-slate-400 leading-relaxed">
+        Optimized flatbuffer model format for low-latency inference on embedded IoT devices such as Raspberry Pi 4/5, Jetson Nano, or weather station microcontrollers.
+      </p>
+      <div class="mt-4 flex items-center justify-between text-xs font-mono text-slate-400 bg-slate-950 p-2.5 rounded-lg border border-slate-800">
+        <span>File Size: ~20.55 MB</span>
+        <span class="text-purple-400">Ready for IoT Edge</span>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

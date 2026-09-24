@@ -1,0 +1,276 @@
+/* =====================================================================
+   SKYsense AI - Precision Meteorological AI Interface Styles
+   Master's Degree Final Project Demonstration Grade
+   ===================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
+
+:root {
+    --bg-base: #0B0F19;
+    --bg-surface: #111827;
+    --bg-card: #0F172A;
+    --bg-card-subtle: #1E293B;
+    --bg-glass: rgba(17, 24, 39, 0.85);
+    --border-glass: rgba(51, 65, 85, 0.6);
+    --border-subtle: rgba(51, 65, 85, 0.4);
+    --text-primary: #F8FAFC;
+    --text-secondary: #CBD5E1;
+    --text-muted: #94A3B8;
+    --accent-sky: #0EA5E9;
+    --accent-sky-light: #38BDF8;
+    --accent-indigo: #6366F1;
+    --accent-emerald: #10B981;
+    --accent-amber: #F59E0B;
+    --accent-rose: #F43F5E;
+}
+
+/* Light Theme Variables */
+html.light {
+    --bg-base: #F8FAFC;
+    --bg-surface: #FFFFFF;
+    --bg-card: #FFFFFF;
+    --bg-card-subtle: #F1F5F9;
+    --bg-glass: rgba(255, 255, 255, 0.92);
+    --border-glass: rgba(226, 232, 240, 0.9);
+    --border-subtle: rgba(226, 232, 240, 0.8);
+    --text-primary: #0F172A;
+    --text-secondary: #334155;
+    --text-muted: #64748B;
+}
+
+/* Base Body Styles */
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--bg-base);
+    color: var(--text-primary);
+    overflow-x: hidden;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+h1, h2, h3, h4, h5, h6, .font-heading {
+    font-family: 'Outfit', sans-serif;
+}
+
+/* Page Entrance Smooth Transition */
+main {
+    animation: pageFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes pageFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Accessibility: Skip Link */
+.skip-link {
+    position: absolute;
+    top: -60px;
+    left: 1rem;
+    background: #0EA5E9;
+    color: #FFFFFF;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+    z-index: 100;
+    transition: top 0.2s ease-in-out;
+    box-shadow: 0 4px 14px rgba(14, 165, 233, 0.4);
+}
+.skip-link:focus {
+    top: 1rem;
+}
+
+/* Glassmorphism Panels */
+.glass-panel {
+    background: var(--bg-glass);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--border-glass);
+}
+
+.glass-panel-hover {
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-panel-hover:hover {
+    transform: translateY(-2px);
+    border-color: rgba(14, 165, 233, 0.4);
+    box-shadow: 0 12px 30px -10px rgba(14, 165, 233, 0.15);
+}
+
+/* Status Glows */
+.glow-emerald {
+    box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.3);
+}
+
+.glow-amber {
+    box-shadow: 0 0 25px -5px rgba(245, 158, 11, 0.3);
+}
+
+.glow-rose {
+    box-shadow: 0 0 25px -5px rgba(244, 63, 94, 0.3);
+}
+
+.glow-sky {
+    box-shadow: 0 0 25px -5px rgba(14, 165, 233, 0.3);
+}
+
+/* Drag & Drop Upload Zone Active State */
+.dropzone-active {
+    border-color: #0EA5E9 !important;
+    background-color: rgba(14, 165, 233, 0.12) !important;
+    transform: scale(1.008);
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: var(--bg-base);
+}
+::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #475569;
+}
+
+/* Light Theme Overrides */
+html.light body {
+    background-color: #F8FAFC !important;
+    color: #0F172A !important;
+}
+
+html.light .glass-panel {
+    background: rgba(255, 255, 255, 0.88) !important;
+    border-color: #E2E8F0 !important;
+    box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
+}
+
+html.light nav.glass-panel {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border-bottom-color: #E2E8F0 !important;
+}
+
+html.light .bg-slate-950 {
+    background-color: #F1F5F9 !important;
+}
+
+html.light .bg-slate-900 {
+    background-color: #FFFFFF !important;
+}
+
+html.light .bg-slate-900\/90,
+html.light .bg-slate-900\/80,
+html.light .bg-slate-900\/60,
+html.light .bg-slate-900\/40 {
+    background-color: rgba(255, 255, 255, 0.95) !important;
+}
+
+html.light .bg-slate-950\/80,
+html.light .bg-slate-950\/60,
+html.light .bg-slate-950\/50,
+html.light .bg-slate-950\/40 {
+    background-color: #F8FAFC !important;
+}
+
+html.light .bg-slate-800 {
+    background-color: #E2E8F0 !important;
+}
+
+html.light .bg-slate-800\/60,
+html.light .bg-slate-800\/80 {
+    background-color: #F1F5F9 !important;
+}
+
+html.light .border-slate-800,
+html.light .border-slate-700,
+html.light .border-slate-800\/80,
+html.light .border-slate-700\/80 {
+    border-color: #E2E8F0 !important;
+}
+
+html.light .text-white {
+    color: #0F172A !important;
+}
+
+html.light .text-slate-100,
+html.light .text-slate-200 {
+    color: #1E293B !important;
+}
+
+html.light .text-slate-300 {
+    color: #334155 !important;
+}
+
+html.light .text-slate-400 {
+    color: #64748B !important;
+}
+
+html.light .text-slate-500 {
+    color: #94A3B8 !important;
+}
+
+html.light table tbody tr:hover {
+    background-color: #F8FAFC !important;
+}
+
+html.light thead.bg-slate-950 {
+    background-color: #F1F5F9 !important;
+}
+
+/* High Contrast Projector Mode */
+.projector-mode {
+    font-size: 1.05rem;
+}
+.projector-mode .projector-scale-lg {
+    font-size: 2.25rem;
+    line-height: 2.5rem;
+}
+.projector-mode .projector-scale-xl {
+    font-size: 3.5rem;
+    line-height: 1;
+}
+.projector-mode .glass-panel {
+    border-width: 2px !important;
+    background: rgba(10, 15, 29, 0.98) !important;
+}
+
+/* Inference Loading Modal Animations */
+@keyframes radarSweep {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.radar-sweep {
+    animation: radarSweep 2s linear infinite;
+}
+
+@keyframes pulseGlow {
+    0%, 100% { opacity: 0.3; transform: scale(0.98); }
+    50% { opacity: 0.8; transform: scale(1.02); }
+}
+
+.pulse-glow {
+    animation: pulseGlow 2.4s ease-in-out infinite;
+}
+
+/* Button & Interactive Element Micro-interactions */
+button:active:not(:disabled),
+a.button:active {
+    transform: scale(0.98);
+}
+
+:focus-visible {
+    outline: 2px solid #0EA5E9;
+    outline-offset: 2px;
+}

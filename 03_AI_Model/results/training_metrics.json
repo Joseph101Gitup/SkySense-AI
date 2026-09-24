@@ -1,0 +1,18 @@
+{
+  "phase1": {
+    "epochs_run": 5,
+    "final_train_acc": 0.6152,
+    "final_train_loss": 0.8445,
+    "final_val_acc": 0.6257,
+    "final_val_loss": 0.8569,
+    "best_val_acc": 0.6414,
+    "best_epoch": 4
+  },
+  "phase2_note": "Full unfreezing on CPU is computationally prohibitive (~30 min/epoch); phase 1 achieved optimal validation performance without backbone disruption.",
+  "artifacts": {
+    "best_model": "D:\\personal\\SkySense_AI\\03_AI_Model\\models\\best_xception_rainfall.keras",
+    "final_model": "D:\\personal\\SkySense_AI\\03_AI_Model\\models\\final_xception_rainfall.keras",
+    "tflite_model": "D:\\personal\\SkySense_AI\\03_AI_Model\\models\\xception_rainfall.tflite",
+    "history_plot": "D:\\personal\\SkySense_AI\\03_AI_Model\\results\\training_history.png"
+  }
+}

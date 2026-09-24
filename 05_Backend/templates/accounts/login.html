@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sign In - SKYsense AI{% endblock %}
+
+{% block content %}
+<div class="min-h-[calc(100vh-14rem)] flex items-center justify-center px-4 py-12">
+  <div class="w-full max-w-md">
+    
+    <!-- Header / Brand Icon -->
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-sky-500/10 border border-sky-500/30 text-sky-400 mb-4 shadow-lg shadow-sky-500/10">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+        </svg>
+      </div>
+      <h1 class="text-2xl sm:text-3xl font-heading font-extrabold text-white tracking-tight">Researcher Portal</h1>
+      <p class="text-sm text-slate-400 mt-2">Sign in to access rainfall intelligence and prediction history</p>
+    </div>
+
+    <!-- Login Glassmorphic Card -->
+    <div class="glass-panel p-8 rounded-2xl border border-slate-800 shadow-2xl relative overflow-hidden">
+      <!-- Glow ambient accent -->
+      <div class="absolute -top-24 -right-24 w-48 h-48 bg-sky-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      <!-- Messages / Feedback -->
+      {% if messages %}
+        <div class="space-y-3 mb-6">
+          {% for message in messages %}
+            <div class="p-3.5 rounded-xl text-xs sm:text-sm font-medium border flex items-center gap-2.5 {% if message.tags == 'error' %}bg-rose-500/10 border-rose-500/30 text-rose-300{% elif message.tags == 'success' %}bg-emerald-500/10 border-emerald-500/30 text-emerald-300{% else %}bg-sky-500/10 border-sky-500/30 text-sky-300{% endif %}">
+              {% if message.tags == 'error' %}
+                <svg class="w-4 h-4 flex-shrink-0 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              {% elif message.tags == 'success' %}
+                <svg class="w-4 h-4 flex-shrink-0 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              {% else %}
+                <svg class="w-4 h-4 flex-shrink-0 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              {% endif %}
+              <span>{{ message }}</span>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <form method="post" action="{% url 'login' %}{% if next %}?next={{ next }}{% endif %}" class="space-y-5">
+        {% csrf_token %}
+        {% if next %}
+          <input type="hidden" name="next" value="{{ next }}">
+        {% endif %}
+
+        {% if form.non_field_errors %}
+          <div class="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs sm:text-sm">
+            {% for error in form.non_field_errors %}
+              <p>{{ error }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <!-- Username -->
+        <div>
+          <label for="{{ form.username.id_for_label }}" class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">
+            Username
+          </label>
+          {{ form.username }}
+          {% if form.username.errors %}
+            <p class="text-xs text-rose-400 mt-1.5">{{ form.username.errors.0 }}</p>
+          {% endif %}
+        </div>
+
+        <!-- Password -->
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <label for="{{ form.password.id_for_label }}" class="block text-xs font-semibold uppercase tracking-wider text-slate-300">
+              Password
+            </label>
+          </div>
+          {{ form.password }}
+          {% if form.password.errors %}
+            <p class="text-xs text-rose-400 mt-1.5">{{ form.password.errors.0 }}</p>
+          {% endif %}
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="w-full py-3 px-4 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 shadow-lg shadow-sky-500/25 transition-all duration-200 transform hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
+          </svg>
+          Sign In to Dashboard
+        </button>
+      </form>
+
+      <!-- Security Guarantee -->
+      <div class="mt-6 pt-5 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
+        <span class="flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+          </svg>
+          Django PBKDF2 Encrypted
+        </span>
+        <span class="text-slate-400">CSRF Protected</span>
+      </div>
+
+    </div>
+
+    <!-- Registration Link Footer -->
+    <div class="text-center mt-6 text-sm text-slate-400">
+      Need a researcher account?
+      <a href="{% url 'register' %}" class="text-sky-400 hover:text-sky-300 font-semibold underline underline-offset-4 ml-1">
+        Register here
+      </a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

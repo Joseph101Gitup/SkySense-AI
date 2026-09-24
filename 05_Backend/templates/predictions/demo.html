@@ -1,0 +1,877 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+  /* Projector Optimization Styles */
+  .projector-mode {
+    font-size: 1.125rem;
+  }
+  .projector-mode .projector-scale-lg {
+    font-size: 2.25rem;
+    line-height: 2.5rem;
+  }
+  .projector-mode .projector-scale-xl {
+    font-size: 3.5rem;
+    line-height: 1;
+  }
+  .projector-mode .glass-panel {
+    border-width: 2px !important;
+    background: rgba(10, 15, 29, 0.95) !important;
+  }
+
+  /* Scanner Sweep Overlay Animation */
+  @keyframes scanlineSweep {
+    0% {
+      top: 0%;
+      opacity: 0.8;
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      top: 100%;
+      opacity: 0.8;
+    }
+  }
+
+  .scan-beam {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, rgba(14,165,233,0) 0%, #38bdf8 50%, rgba(14,165,233,0) 100%);
+    box-shadow: 0 0 15px 3px #0ea5e9;
+    animation: scanlineSweep 1.8s ease-in-out infinite alternate;
+  }
+
+  @keyframes pulseGrid {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 0.5; }
+  }
+
+  .radar-grid {
+    background-image: 
+      linear-gradient(rgba(14, 165, 233, 0.15) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(14, 165, 233, 0.15) 1px, transparent 1px);
+    background-size: 24px 24px;
+    animation: pulseGrid 3s ease-in-out infinite;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="demo-root" class="space-y-6">
+
+  <!-- Top Presentation Toolbar (Optimized for Projectors & Seminars) -->
+  <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-2xl bg-slate-900/90 border border-slate-700/80 shadow-2xl backdrop-blur-md">
+    <div class="flex items-center gap-3">
+      <div class="w-3.5 h-3.5 rounded-full bg-emerald-400 animate-ping"></div>
+      <div>
+        <div class="flex flex-wrap items-center gap-3">
+          <h1 class="text-2xl sm:text-3xl font-bold font-heading tracking-tight text-white">SKYsense AI Live Demonstration</h1>
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-sky-500/20 text-sky-300 border border-sky-500/30 shrink-0">
+            PROJECTION MODE
+          </span>
+        </div>
+        <p class="text-xs sm:text-sm text-slate-400">Live AI Inference on Real-World Meteorological Cloud Photography</p>
+      </div>
+    </div>
+
+    <!-- Presentation Controls -->
+    <div class="flex items-center flex-wrap gap-2.5 w-full sm:w-auto">
+      <!-- Model Version Badge -->
+      <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 border border-slate-700 text-xs font-mono text-slate-300">
+        <span class="w-2 h-2 rounded-full bg-sky-400"></span>
+        <span class="font-medium text-slate-400">Model:</span>
+        <span class="text-sky-300 font-semibold" id="top-model-version">Xception-v1.0</span>
+      </div>
+
+      <!-- Projector High-Contrast Toggle -->
+      <button type="button" id="btn-projector-toggle" 
+              class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-xs font-medium text-slate-200 transition-colors shadow-sm">
+        <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+        </svg>
+        <span id="projector-toggle-text">High-Contrast: OFF</span>
+      </button>
+
+      <!-- Fullscreen Toggle -->
+      <button type="button" id="btn-fullscreen-toggle"
+              class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold transition-all shadow-md hover:shadow-sky-500/25">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+        </svg>
+        <span id="fullscreen-text">Fullscreen</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Verification Note -->
+  <div class="px-4 py-2.5 rounded-xl bg-slate-900/60 border border-slate-800 text-xs text-slate-400 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+      </svg>
+      <span><strong>Live Real Inference:</strong> All predictions are processed directly by the deep learning Xception model. Zero synthetic or predetermined values.</span>
+    </div>
+    <span class="hidden md:inline text-slate-500 font-mono">12 Ground Truth Specimens Ready</span>
+  </div>
+
+  <!-- Main Demo Stage (2-Column Presentation Layout) -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- LEFT COLUMN: Specimen Selector & Image Preview Stage (Cols: 5) -->
+    <div class="lg:col-span-5 space-y-5">
+
+      <!-- Input Selection Tabs -->
+      <div class="bg-slate-900/80 rounded-2xl p-1.5 border border-slate-800 flex">
+        <button type="button" id="tab-btn-samples"
+                class="flex-1 py-2 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-sky-500 text-white shadow-md">
+          1. Select Sample Image
+        </button>
+        <button type="button" id="tab-btn-upload"
+                class="flex-1 py-2 px-4 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-400 hover:text-slate-200">
+          Upload Your Own Image
+        </button>
+      </div>
+
+      <!-- TAB PANEL 1: Curated Samples Picker -->
+      <div id="panel-samples" class="bg-slate-900/80 rounded-2xl p-4 border border-slate-800 space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Representative Dataset Specimens</span>
+          <!-- Category Filter Pills -->
+          <div class="flex items-center gap-1" id="filter-chips">
+            <button type="button" data-filter="all" class="filter-chip active px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-800 text-sky-400 border border-sky-500/30">All</button>
+            <button type="button" data-filter="no_low" class="filter-chip px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-800/60 text-slate-400 hover:text-slate-200">No/Low</button>
+            <button type="button" data-filter="low_medium" class="filter-chip px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-800/60 text-slate-400 hover:text-slate-200">Low/Med</button>
+            <button type="button" data-filter="medium_heavy" class="filter-chip px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-800/60 text-slate-400 hover:text-slate-200">Med/Heavy</button>
+          </div>
+        </div>
+
+        <!-- Specimen Thumbnail Grid -->
+        <div class="grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-4 gap-2.5 max-h-56 overflow-y-auto pr-1" id="samples-grid">
+          {% for s in demo_samples %}
+          <div class="specimen-card cursor-pointer group relative rounded-xl overflow-hidden border-2 transition-all p-1 bg-slate-950/60 hover:border-sky-400 {% if forloop.first %}border-sky-500 ring-2 ring-sky-500/40{% else %}border-slate-800{% endif %}"
+               data-sample-path="{{ s.relative_path }}"
+               data-serve-url="{{ s.serve_url }}"
+               data-filename="{{ s.filename }}"
+               data-genus="{{ s.cloud_genus }}"
+               data-category="{{ s.category_key }}"
+               data-category-code="{{ s.category_code }}"
+               data-category-label="{{ s.category_label }}"
+               data-resolution="{{ s.resolution }}">
+            <div class="aspect-square rounded-lg overflow-hidden relative bg-slate-900">
+              <img src="{{ s.serve_url }}" alt="{{ s.cloud_genus }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy">
+              <!-- Category Indicator Tag -->
+              <span class="absolute bottom-1 right-1 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider
+                {% if s.category_key == 'no_low' %}bg-emerald-950/90 text-emerald-300 border border-emerald-500/40
+                {% elif s.category_key == 'low_medium' %}bg-amber-950/90 text-amber-300 border border-amber-500/40
+                {% else %}bg-rose-950/90 text-rose-300 border border-rose-500/40{% endif %}">
+                {% if s.category_key == 'no_low' %}Dry{% elif s.category_key == 'low_medium' %}Light{% else %}Heavy{% endif %}
+              </span>
+            </div>
+            <div class="mt-1 px-1 text-[11px] font-medium text-slate-300 truncate" title="{{ s.cloud_genus }}">{{ s.cloud_genus }}</div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- TAB PANEL 2: Upload Your Own Image (Hidden by default) -->
+      <div id="panel-upload" class="hidden bg-slate-900/80 rounded-2xl p-5 border border-slate-800 space-y-4">
+        <div>
+          <h2 class="text-sm font-semibold text-white">Upload Your Own Image</h2>
+          <p class="text-xs text-slate-400">Upload any local cloud photograph (JPEG, PNG up to 15MB) for real-time model analysis.</p>
+        </div>
+
+        <div id="dropzone" class="border-2 border-dashed border-slate-700 hover:border-sky-500 rounded-2xl p-6 text-center transition-colors cursor-pointer bg-slate-950/50">
+          <input type="file" id="file-input" accept="image/jpeg,image/png,image/jpg" class="hidden">
+          <div class="flex flex-col items-center justify-center gap-2">
+            <div class="w-12 h-12 rounded-full bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+              </svg>
+            </div>
+            <div class="text-sm font-medium text-slate-200">
+              <span class="text-sky-400 hover:underline">Click to browse</span> or drag and drop image here
+            </div>
+            <p class="text-xs text-slate-500">Supports JPG, PNG (Max: 15 MB)</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- IMAGE PREVIEW STAGE (Large, High-Contrast Projector Display) -->
+      <div class="bg-slate-900/90 rounded-2xl p-4 border border-slate-800 space-y-3 shadow-2xl">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">2. Image Preview Stage</span>
+            <span id="specimen-badge-type" class="px-2 py-0.5 rounded text-[10px] font-bold bg-sky-500/20 text-sky-300 border border-sky-500/30">SAMPLE SPECIMEN</span>
+          </div>
+          <span id="specimen-resolution" class="text-xs font-mono text-slate-400">400 × 400</span>
+        </div>
+
+        <!-- Stage Container with Radar & Scan Overlays -->
+        <div class="relative aspect-video sm:aspect-[4/3] rounded-xl overflow-hidden bg-slate-950 border border-slate-700/80 flex items-center justify-center">
+          
+          <!-- Image Element -->
+          <img id="stage-image" 
+               src="{% if first_sample %}{{ first_sample.serve_url }}{% else %}{% static 'images/placeholder-cloud.jpg' %}{% endif %}" 
+               alt="Active Cloud Specimen" 
+               class="w-full h-full object-contain select-none transition-all duration-300">
+
+          <!-- Animated Analysis State Overlay (Hidden until inference begins) -->
+          <div id="scan-overlay" class="hidden absolute inset-0 bg-slate-950/70 backdrop-blur-[2px] flex flex-col items-center justify-center pointer-events-none">
+            <!-- Laser scan sweep bar -->
+            <div class="scan-beam"></div>
+            <!-- Radar crosshairs -->
+            <div class="absolute inset-0 radar-grid"></div>
+
+            <!-- Animated Multi-Stage Progress Readout -->
+            <div class="relative z-10 text-center px-6 py-4 rounded-2xl bg-slate-900/90 border border-sky-500/40 shadow-2xl space-y-2">
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/20 text-sky-300 text-xs font-semibold animate-pulse">
+                <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                </svg>
+                <span>ANALYZING INFERENCE TENSOR...</span>
+              </div>
+              <div id="scan-status-text" class="text-sm font-mono text-slate-200">Preprocessing 256×256 matrix...</div>
+              <div class="w-48 h-1.5 bg-slate-800 rounded-full overflow-hidden mx-auto">
+                <div id="scan-progress-bar" class="h-full bg-sky-500 w-1/3 transition-all duration-300"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Specimen Metadata Readout -->
+        <div class="grid grid-cols-2 gap-2 text-xs bg-slate-950/50 p-2.5 rounded-xl border border-slate-800/80">
+          <div>
+            <span class="text-slate-500 block">Cloud Genus / Source</span>
+            <span id="specimen-genus-text" class="font-semibold text-slate-200 truncate block">
+              {% if first_sample %}{{ first_sample.cloud_genus }}{% else %}Custom Image{% endif %}
+            </span>
+          </div>
+          <div>
+            <span class="text-slate-500 block">Dataset Reference</span>
+            <span id="specimen-dataset-ref" class="font-mono text-slate-300 truncate block">
+              {% if first_sample %}{{ first_sample.category_label }}{% else %}User Upload{% endif %}
+            </span>
+          </div>
+        </div>
+
+        <!-- 3. Analyze Button -->
+        <button type="button" id="btn-analyze"
+                class="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-heading font-bold text-base sm:text-lg tracking-wide uppercase shadow-lg shadow-sky-500/30 transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-3">
+          <svg class="w-6 h-6 text-white animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+          <span id="btn-analyze-text">3. Analyze Cloud Specimen</span>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- RIGHT COLUMN: AI Inference Output Dashboard (Cols: 7) -->
+    <div class="lg:col-span-7 space-y-5">
+
+      <!-- READY / IDLE STATE (Shown before first analysis) -->
+      <div id="state-idle" class="bg-slate-900/80 rounded-2xl p-8 border border-slate-800 text-center space-y-4">
+        <div class="w-16 h-16 rounded-2xl bg-sky-500/10 border border-sky-500/30 flex items-center justify-center mx-auto text-sky-400">
+          <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          </svg>
+        </div>
+        <div class="max-w-md mx-auto space-y-2">
+          <h2 class="text-xl font-bold font-heading text-white">Inference Engine Ready</h2>
+          <p class="text-sm text-slate-400">
+            Select a verified dataset sample or upload your own cloud photograph, then click 
+            <strong class="text-sky-400">Analyze Cloud Specimen</strong> to execute live deep neural inference.
+          </p>
+        </div>
+        <div class="grid grid-cols-3 gap-3 pt-4 border-t border-slate-800 text-xs">
+          <div class="p-2.5 rounded-xl bg-slate-950/60 border border-slate-800">
+            <span class="text-slate-500 block">Backbone</span>
+            <span class="font-bold text-slate-200">Xception CNN</span>
+          </div>
+          <div class="p-2.5 rounded-xl bg-slate-950/60 border border-slate-800">
+            <span class="text-slate-500 block">Input Shape</span>
+            <span class="font-bold text-slate-200">256 × 256 × 3</span>
+          </div>
+          <div class="p-2.5 rounded-xl bg-slate-950/60 border border-slate-800">
+            <span class="text-slate-500 block">Execution</span>
+            <span class="font-bold text-emerald-400">Real-Time</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- RESULTS CONTAINER (Populated dynamically on analysis) -->
+      <div id="state-results" class="hidden space-y-5">
+
+        <!-- 5. Hero Prediction Banner & Risk Badge -->
+        <div id="prediction-hero-card" class="rounded-2xl p-6 border-2 transition-all shadow-2xl relative overflow-hidden bg-slate-900">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 block mb-1">
+                5. Prediction Result
+              </span>
+              <div id="result-predicted-label" class="text-3xl sm:text-4xl lg:text-5xl font-extrabold font-heading tracking-tight text-white">
+                Medium to Heavy Rain
+              </div>
+              <div id="result-cloud-genus" class="text-sm font-medium text-slate-300 mt-1">
+                Identified Genus: Cumulonimbus (Cb)
+              </div>
+            </div>
+
+            <!-- Risk Badge -->
+            <div id="result-risk-badge" class="px-4 py-2 rounded-xl text-center border font-bold uppercase tracking-wider text-sm sm:text-base shrink-0">
+              HIGH PRECIPITATION RISK
+            </div>
+          </div>
+        </div>
+
+        <!-- Dual Projector Telemetry Readout (Confidence & Processing Time) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          
+          <!-- 6. Confidence -->
+          <div class="bg-slate-900/90 rounded-2xl p-5 border border-slate-800 shadow-xl space-y-2">
+            <div class="flex items-center justify-between text-xs text-slate-400">
+              <span class="font-semibold uppercase tracking-wider">6. Confidence</span>
+              <span class="font-mono text-slate-500">Softmax Peak</span>
+            </div>
+            <div class="flex items-baseline gap-2">
+              <span id="result-confidence-pct" class="text-4xl sm:text-5xl font-extrabold font-heading text-sky-400">
+                98.4%
+              </span>
+              <span class="text-xs text-slate-400">certainty</span>
+            </div>
+            <!-- Progress Bar -->
+            <div class="w-full h-2.5 bg-slate-950 rounded-full overflow-hidden p-0.5 border border-slate-800">
+              <div id="result-confidence-bar" class="h-full bg-gradient-to-r from-sky-500 to-emerald-400 rounded-full transition-all duration-700" style="width: 98%;"></div>
+            </div>
+          </div>
+
+          <!-- 9. Processing Time & 10. Model Version -->
+          <div class="bg-slate-900/90 rounded-2xl p-5 border border-slate-800 shadow-xl space-y-2">
+            <div class="flex items-center justify-between text-xs text-slate-400">
+              <span class="font-semibold uppercase tracking-wider">9. Processing Time</span>
+              <span class="font-mono text-emerald-400 flex items-center gap-1">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> LIVE
+              </span>
+            </div>
+            <div class="flex items-baseline gap-2">
+              <span id="result-latency-ms" class="text-4xl sm:text-5xl font-extrabold font-heading text-emerald-400">
+                38.4
+              </span>
+              <span class="text-sm font-semibold text-slate-300">ms</span>
+            </div>
+            <!-- 10. Model Version -->
+            <div class="flex items-center justify-between pt-1 text-xs text-slate-400 border-t border-slate-800/80">
+              <span>Model Architecture:</span>
+              <span id="result-model-version" class="font-mono font-semibold text-slate-200">Xception-v1.0 (Deep Transfer CNN)</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 7. Probability Chart (Chart.js) -->
+        <div class="bg-slate-900/90 rounded-2xl p-5 border border-slate-800 shadow-xl space-y-3">
+          <div class="flex items-center justify-between">
+            <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-400">
+              7. Probability Distribution (Softmax Output)
+            </h2>
+            <span class="text-xs font-mono text-slate-500">Sum = 1.0000</span>
+          </div>
+
+          <div class="h-44 sm:h-48 relative">
+            <canvas id="probability-chart"></canvas>
+          </div>
+        </div>
+
+        <!-- 8. Explanation & Meteorological Advisory -->
+        <div class="bg-slate-900/90 rounded-2xl p-5 border border-slate-800 shadow-xl space-y-3">
+          <div class="flex items-center gap-2">
+            <svg class="w-5 h-5 text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <h2 class="text-sm font-bold font-heading text-white">
+              8. Scientific Explanation & Meteorological Advisory
+            </h2>
+          </div>
+
+          <div class="space-y-2 text-xs sm:text-sm text-slate-300 leading-relaxed bg-slate-950/60 p-4 rounded-xl border border-slate-800">
+            <div class="flex items-center gap-2 font-semibold text-slate-200">
+              <span class="text-slate-400">Precipitation Estimate:</span>
+              <span id="result-rain-range" class="text-sky-300 font-mono">70% – 100% Probability</span>
+            </div>
+            <p id="result-met-context">
+              Cloud imagery indicates dense vertical cumulonimbus formations with heavy condensed moisture cores, suggesting active convection.
+            </p>
+            <div class="pt-2 border-t border-slate-800/80 flex items-start gap-2">
+              <strong class="text-amber-400 shrink-0">Operational Advisory:</strong>
+              <span id="result-advisory-action" class="text-slate-300">
+                Prepare stormwater discharge systems; alert localized aviation and ground transport operators.
+              </span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // Elements
+  const demoRoot = document.getElementById('demo-root');
+  const btnProjectorToggle = document.getElementById('btn-projector-toggle');
+  const projectorToggleText = document.getElementById('projector-toggle-text');
+  const btnFullscreenToggle = document.getElementById('btn-fullscreen-toggle');
+  const fullscreenText = document.getElementById('fullscreen-text');
+
+  const tabBtnSamples = document.getElementById('tab-btn-samples');
+  const tabBtnUpload = document.getElementById('tab-btn-upload');
+  const panelSamples = document.getElementById('panel-samples');
+  const panelUpload = document.getElementById('panel-upload');
+  const dropzone = document.getElementById('dropzone');
+  const fileInput = document.getElementById('file-input');
+
+  const stageImage = document.getElementById('stage-image');
+  const scanOverlay = document.getElementById('scan-overlay');
+  const scanStatusText = document.getElementById('scan-status-text');
+  const scanProgressBar = document.getElementById('scan-progress-bar');
+  const specimenBadgeType = document.getElementById('specimen-badge-type');
+  const specimenResolution = document.getElementById('specimen-resolution');
+  const specimenGenusText = document.getElementById('specimen-genus-text');
+  const specimenDatasetRef = document.getElementById('specimen-dataset-ref');
+  const btnAnalyze = document.getElementById('btn-analyze');
+  const btnAnalyzeText = document.getElementById('btn-analyze-text');
+
+  const stateIdle = document.getElementById('state-idle');
+  const stateResults = document.getElementById('state-results');
+
+  const predictionHeroCard = document.getElementById('prediction-hero-card');
+  const resultPredictedLabel = document.getElementById('result-predicted-label');
+  const resultCloudGenus = document.getElementById('result-cloud-genus');
+  const resultRiskBadge = document.getElementById('result-risk-badge');
+  const resultConfidencePct = document.getElementById('result-confidence-pct');
+  const resultConfidenceBar = document.getElementById('result-confidence-bar');
+  const resultLatencyMs = document.getElementById('result-latency-ms');
+  const resultModelVersion = document.getElementById('result-model-version');
+  const resultRainRange = document.getElementById('result-rain-range');
+  const resultMetContext = document.getElementById('result-met-context');
+  const resultAdvisoryAction = document.getElementById('result-advisory-action');
+
+  // State
+  let activeMode = 'sample'; // 'sample' or 'upload'
+  let activeSamplePath = '{{ first_sample.relative_path|default:"" }}';
+  let uploadedFile = null;
+  let chartInstance = null;
+  let isProjectorMode = false;
+
+  // 1. Fullscreen Toggle
+  btnFullscreenToggle.addEventListener('click', () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().then(() => {
+        fullscreenText.textContent = 'Exit Fullscreen';
+      }).catch(err => console.error(err));
+    } else {
+      document.exitFullscreen().then(() => {
+        fullscreenText.textContent = 'Fullscreen';
+      });
+    }
+  });
+
+  document.addEventListener('fullscreenchange', () => {
+    if (!document.fullscreenElement) {
+      fullscreenText.textContent = 'Fullscreen';
+    } else {
+      fullscreenText.textContent = 'Exit Fullscreen';
+    }
+  });
+
+  // 2. Projector Mode Toggle
+  btnProjectorToggle.addEventListener('click', () => {
+    isProjectorMode = !isProjectorMode;
+    if (isProjectorMode) {
+      demoRoot.classList.add('projector-mode');
+      projectorToggleText.textContent = 'High-Contrast: ON';
+      btnProjectorToggle.classList.add('bg-amber-500/20', 'border-amber-400');
+    } else {
+      demoRoot.classList.remove('projector-mode');
+      projectorToggleText.textContent = 'High-Contrast: OFF';
+      btnProjectorToggle.classList.remove('bg-amber-500/20', 'border-amber-400');
+    }
+    if (chartInstance) chartInstance.update();
+  });
+
+  // 3. Tab Navigation (Sample vs Upload)
+  tabBtnSamples.addEventListener('click', () => {
+    activeMode = 'sample';
+    tabBtnSamples.classList.add('bg-sky-500', 'text-white', 'shadow-md');
+    tabBtnSamples.classList.remove('text-slate-400');
+    tabBtnUpload.classList.remove('bg-sky-500', 'text-white', 'shadow-md');
+    tabBtnUpload.classList.add('text-slate-400');
+
+    panelSamples.classList.remove('hidden');
+    panelUpload.classList.add('hidden');
+    specimenBadgeType.textContent = 'SAMPLE SPECIMEN';
+
+    // Restore selected sample preview
+    const activeCard = document.querySelector('.specimen-card.ring-2');
+    if (activeCard) {
+      stageImage.src = activeCard.dataset.serveUrl;
+      specimenResolution.textContent = activeCard.dataset.resolution || '400 × 400';
+      specimenGenusText.textContent = activeCard.dataset.genus;
+      specimenDatasetRef.textContent = activeCard.dataset.categoryLabel;
+      activeSamplePath = activeCard.dataset.samplePath;
+    }
+  });
+
+  tabBtnUpload.addEventListener('click', () => {
+    activeMode = 'upload';
+    tabBtnUpload.classList.add('bg-sky-500', 'text-white', 'shadow-md');
+    tabBtnUpload.classList.remove('text-slate-400');
+    tabBtnSamples.classList.remove('bg-sky-500', 'text-white', 'shadow-md');
+    tabBtnSamples.classList.add('text-slate-400');
+
+    panelUpload.classList.remove('hidden');
+    panelSamples.classList.add('hidden');
+    specimenBadgeType.textContent = 'USER UPLOAD';
+
+    if (uploadedFile) {
+      specimenGenusText.textContent = uploadedFile.name;
+      specimenDatasetRef.textContent = 'Custom User Upload';
+    } else {
+      specimenGenusText.textContent = 'Awaiting File Upload...';
+      specimenDatasetRef.textContent = 'User Image';
+    }
+  });
+
+  // 4. Sample Specimen Selection
+  const specimenCards = document.querySelectorAll('.specimen-card');
+  specimenCards.forEach(card => {
+    card.addEventListener('click', () => {
+      specimenCards.forEach(c => {
+        c.classList.remove('border-sky-500', 'ring-2', 'ring-sky-500/40');
+        c.classList.add('border-slate-800');
+      });
+      card.classList.add('border-sky-500', 'ring-2', 'ring-sky-500/40');
+      card.classList.remove('border-slate-800');
+
+      activeSamplePath = card.dataset.samplePath;
+      stageImage.src = card.dataset.serveUrl;
+      specimenResolution.textContent = card.dataset.resolution || '400 × 400';
+      specimenGenusText.textContent = card.dataset.genus;
+      specimenDatasetRef.textContent = card.dataset.categoryLabel;
+      specimenBadgeType.textContent = 'SAMPLE SPECIMEN';
+    });
+  });
+
+  // 5. Category Filter Chips
+  const filterChips = document.querySelectorAll('.filter-chip');
+  filterChips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      filterChips.forEach(c => {
+        c.classList.remove('bg-slate-800', 'text-sky-400', 'border', 'border-sky-500/30');
+        c.classList.add('bg-slate-800/60', 'text-slate-400');
+      });
+      chip.classList.add('bg-slate-800', 'text-sky-400', 'border', 'border-sky-500/30');
+      chip.classList.remove('bg-slate-800/60', 'text-slate-400');
+
+      const filterVal = chip.dataset.filter;
+      specimenCards.forEach(card => {
+        if (filterVal === 'all' || card.dataset.category === filterVal) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+    });
+  });
+
+  // 6. File Upload Handling
+  dropzone.addEventListener('click', () => fileInput.click());
+
+  dropzone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropzone.classList.add('border-sky-500', 'bg-sky-500/10');
+  });
+
+  dropzone.addEventListener('dragleave', () => {
+    dropzone.classList.remove('border-sky-500', 'bg-sky-500/10');
+  });
+
+  dropzone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropzone.classList.remove('border-sky-500', 'bg-sky-500/10');
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleUserFile(e.dataTransfer.files[0]);
+    }
+  });
+
+  fileInput.addEventListener('change', (e) => {
+    if (e.target.files && e.target.files[0]) {
+      handleUserFile(e.target.files[0]);
+    }
+  });
+
+  function handleUserFile(file) {
+    if (!['image/jpeg', 'image/png', 'image/jpg'].includes(file.type)) {
+      alert('Only JPEG and PNG images are supported.');
+      return;
+    }
+    if (file.size > 15 * 1024 * 1024) {
+      alert('File size exceeds the 15 MB limit.');
+      return;
+    }
+
+    uploadedFile = file;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      stageImage.src = ev.target.result;
+      specimenResolution.textContent = `${(file.size / 1024).toFixed(1)} KB`;
+      specimenGenusText.textContent = file.name;
+      specimenDatasetRef.textContent = 'Custom Uploaded Specimen';
+      specimenBadgeType.textContent = 'USER UPLOAD';
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // Helper: Get CSRF token
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+
+  // 7. Live Inference Analysis
+  btnAnalyze.addEventListener('click', async () => {
+    if (activeMode === 'upload' && !uploadedFile) {
+      alert('Please upload an image file first or switch to sample images.');
+      return;
+    }
+    if (activeMode === 'sample' && !activeSamplePath) {
+      alert('Please select a sample image specimen.');
+      return;
+    }
+
+    // Enter Animated Analysis State
+    scanOverlay.classList.remove('hidden');
+    btnAnalyze.disabled = true;
+    btnAnalyze.classList.add('opacity-75', 'cursor-not-allowed');
+    btnAnalyzeText.textContent = 'Executing Neural Inference...';
+
+    // Dynamic Scanning Stages for Presentation
+    scanProgressBar.style.width = '20%';
+    scanStatusText.textContent = '[1/4] Tensor Ingestion: 256×256×3 matrix...';
+
+    setTimeout(() => {
+      scanProgressBar.style.width = '55%';
+      scanStatusText.textContent = '[2/4] Xception 36 depthwise separable layers...';
+    }, 200);
+
+    setTimeout(() => {
+      scanProgressBar.style.width = '85%';
+      scanStatusText.textContent = '[3/4] Global average pooling & dense activation...';
+    }, 450);
+
+    // Prepare Payload
+    const formData = new FormData();
+    if (activeMode === 'upload') {
+      formData.append('image', uploadedFile);
+    } else {
+      formData.append('sample_path', activeSamplePath);
+    }
+
+    const tStart = performance.now();
+
+    try {
+      const response = await fetch('/demo/analyze/', {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': getCookie('csrftoken') || ''
+        },
+        body: formData
+      });
+
+      const data = await response.json();
+
+      if (!data.success) {
+        throw new Error(data.error || 'Inference execution failed.');
+      }
+
+      // Finish progress animation
+      scanProgressBar.style.width = '100%';
+      scanStatusText.textContent = '[4/4] Softmax classification vector resolved!';
+
+      setTimeout(() => {
+        scanOverlay.classList.add('hidden');
+        btnAnalyze.disabled = false;
+        btnAnalyze.classList.remove('opacity-75', 'cursor-not-allowed');
+        btnAnalyzeText.textContent = '⚡ Re-Analyze Specimen';
+
+        // Render Results
+        renderResults(data);
+      }, 350);
+
+    } catch (err) {
+      console.error(err);
+      scanOverlay.classList.add('hidden');
+      btnAnalyze.disabled = false;
+      btnAnalyze.classList.remove('opacity-75', 'cursor-not-allowed');
+      btnAnalyzeText.textContent = '3. Analyze Cloud Specimen';
+      alert('Inference error: ' + err.message);
+    }
+  });
+
+  // 8. Render Results Function
+  function renderResults(data) {
+    stateIdle.classList.add('hidden');
+    stateResults.classList.remove('hidden');
+
+    // 5. Prediction Result
+    resultPredictedLabel.textContent = data.predicted_label;
+    resultCloudGenus.textContent = `Cloud Genus: ${data.cloud_genus || 'Identified Cloud Formation'}`;
+
+    // Styling based on category
+    const pred = data.prediction;
+    if (pred === 'No_to_Low_Rain') {
+      predictionHeroCard.className = 'rounded-2xl p-6 border-2 transition-all shadow-2xl relative overflow-hidden bg-gradient-to-r from-emerald-950/80 to-slate-900 border-emerald-500 glow-emerald';
+      resultRiskBadge.className = 'px-4 py-2 rounded-xl text-center border font-bold uppercase tracking-wider text-sm sm:text-base shrink-0 bg-emerald-500/20 text-emerald-300 border-emerald-500/40';
+      resultRiskBadge.textContent = 'DRY / LOW RISK';
+    } else if (pred === 'Low_to_Medium_Rain') {
+      predictionHeroCard.className = 'rounded-2xl p-6 border-2 transition-all shadow-2xl relative overflow-hidden bg-gradient-to-r from-amber-950/80 to-slate-900 border-amber-500 glow-amber';
+      resultRiskBadge.className = 'px-4 py-2 rounded-xl text-center border font-bold uppercase tracking-wider text-sm sm:text-base shrink-0 bg-amber-500/20 text-amber-300 border-amber-500/40';
+      resultRiskBadge.textContent = 'MODERATE RISK';
+    } else {
+      predictionHeroCard.className = 'rounded-2xl p-6 border-2 transition-all shadow-2xl relative overflow-hidden bg-gradient-to-r from-rose-950/80 to-slate-900 border-rose-500 glow-rose';
+      resultRiskBadge.className = 'px-4 py-2 rounded-xl text-center border font-bold uppercase tracking-wider text-sm sm:text-base shrink-0 bg-rose-500/20 text-rose-300 border-rose-500/40';
+      resultRiskBadge.textContent = 'HIGH PRECIPITATION RISK';
+    }
+
+    // 6. Confidence
+    resultConfidencePct.textContent = data.confidence_pct;
+    resultConfidenceBar.style.width = data.confidence_pct;
+
+    // 9. Processing Time & 10. Model Version
+    resultLatencyMs.textContent = data.processing_time_ms;
+    resultModelVersion.textContent = data.model_version;
+
+    // 8. Explanation
+    if (data.explanation) {
+      resultRainRange.textContent = data.explanation.rain_probability_range || 'Variable';
+      resultMetContext.textContent = data.explanation.meteorological_context || 'Cloud imagery analyzed by neural network.';
+      resultAdvisoryAction.textContent = data.explanation.advisory_action || 'Refer to regional meteorological radar.';
+    }
+
+    // 7. Probability Chart (Chart.js)
+    renderProbabilityChart(data.probabilities);
+
+    // Smooth scroll into results on mobile
+    if (window.innerWidth < 1024) {
+      stateResults.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  // 9. Chart.js Horizontal Bar Chart
+  function renderProbabilityChart(probs) {
+    const ctx = document.getElementById('probability-chart').getContext('2d');
+
+    const labels = [
+      'No to Low Rain',
+      'Low to Medium Rain',
+      'Medium to Heavy Rain'
+    ];
+
+    const values = [
+      (probs.No_to_Low_Rain * 100).toFixed(1),
+      (probs.Low_to_Medium_Rain * 100).toFixed(1),
+      (probs.Medium_to_Heavy_Rain * 100).toFixed(1)
+    ];
+
+    const backgroundColors = [
+      'rgba(16, 185, 129, 0.8)', // Emerald
+      'rgba(245, 158, 11, 0.8)',  // Amber
+      'rgba(244, 63, 94, 0.8)'   // Rose
+    ];
+
+    const borderColors = [
+      '#10B981',
+      '#F59E0B',
+      '#F43F5E'
+    ];
+
+    if (chartInstance) {
+      chartInstance.data.datasets[0].data = values;
+      chartInstance.update();
+      return;
+    }
+
+    chartInstance = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          data: values,
+          backgroundColor: backgroundColors,
+          borderColor: borderColors,
+          borderWidth: 2,
+          borderRadius: 8,
+          barThickness: 24,
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: (item) => `${item.raw}% Probability`
+            }
+          }
+        },
+        scales: {
+          x: {
+            beginAtZero: true,
+            max: 100,
+            grid: {
+              color: 'rgba(51, 65, 85, 0.3)'
+            },
+            ticks: {
+              color: '#94A3B8',
+              font: { family: 'Inter', size: 11 },
+              callback: (val) => `${val}%`
+            }
+          },
+          y: {
+            grid: { display: false },
+            ticks: {
+              color: '#F1F5F9',
+              font: { family: 'Outfit', size: 13, weight: '600' }
+            }
+          }
+        }
+      }
+    });
+  }
+
+});
+</script>
+{% endblock %}

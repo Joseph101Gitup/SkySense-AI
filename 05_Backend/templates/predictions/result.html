@@ -1,0 +1,233 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto space-y-8 py-4">
+
+  <!-- Top Breadcrumb & Quick Actions -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+    <div class="flex items-center gap-2 text-xs font-mono text-slate-400">
+      <a href="{% url 'core:dashboard' %}" class="hover:text-sky-400 transition">Dashboard</a>
+      <span>/</span>
+      <a href="{% url 'predictions:predict' %}" class="hover:text-sky-400 transition">Predict</a>
+      <span>/</span>
+      <span class="text-sky-400 font-bold">Result</span>
+    </div>
+    <div class="flex items-center gap-3">
+      <!-- Analyze Another Image Button -->
+      <a href="{% url 'predictions:predict' %}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold bg-gradient-to-r from-sky-500 to-indigo-600 text-white shadow-lg shadow-sky-500/20 hover:from-sky-400 hover:to-indigo-500 transition-all duration-200 hover:scale-[1.02]">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+        Analyze Another Image
+      </a>
+      <!-- View History Button -->
+      <a href="{% url 'predictions:history' %}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-medium bg-slate-900 border border-slate-700/80 text-slate-200 hover:text-white hover:bg-slate-800 transition">
+        <svg class="w-4 h-4 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        View History
+      </a>
+    </div>
+  </div>
+
+  <!-- Primary Diagnostic Layout (2 Columns) -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+    
+    <!-- Left Column: Uploaded Specimen & Technical Diagnostics (5 cols) -->
+    <div class="lg:col-span-5 space-y-6">
+      
+      <!-- Uploaded Image Card -->
+      <div class="glass-panel p-5 rounded-3xl space-y-4 shadow-xl">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Uploaded Specimen</span>
+          <span class="text-[11px] font-mono text-emerald-400 bg-emerald-950/60 border border-emerald-800 px-2 py-0.5 rounded">Verified Ingestion</span>
+        </div>
+
+        <div class="relative overflow-hidden rounded-2xl bg-black aspect-square flex items-center justify-center border border-slate-800">
+          {% if record.image %}
+            <img src="{{ record.image.url }}" alt="{{ record.original_filename }}" class="w-full h-full object-cover">
+          {% else %}
+            <div class="text-slate-600 text-sm">Image preview unavailable</div>
+          {% endif %}
+          <div class="absolute bottom-3 left-3 px-3 py-1 rounded-lg bg-black/80 backdrop-blur-md border border-slate-700 text-[11px] font-mono text-slate-300">
+            Rescaled: 256 &times; 256 RGB
+          </div>
+        </div>
+
+        <!-- Specimen Metadata & Diagnostic Provenance -->
+        <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800/80 text-xs space-y-2.5 font-mono">
+          <div class="flex justify-between border-b border-slate-900 pb-2">
+            <span class="text-slate-500">Original File:</span>
+            <span class="text-slate-200 font-semibold truncate max-w-[170px]" title="{{ record.original_filename }}">{{ record.original_filename }}</span>
+          </div>
+          <div class="flex justify-between border-b border-slate-900 pb-2">
+            <span class="text-slate-500">Model Version:</span>
+            <span class="text-sky-400 font-semibold">{{ record.model_version }}</span>
+          </div>
+          <div class="flex justify-between border-b border-slate-900 pb-2">
+            <span class="text-slate-500">Processing Time:</span>
+            <span class="text-white font-bold">{{ record.latency_ms }} ms</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-500">Timestamp (UTC):</span>
+            <span class="text-slate-300">{{ record.created_at|date:"M d, Y H:i:s" }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Action Buttons Below Specimen -->
+      <div class="flex gap-3">
+        <a href="{% url 'predictions:detail' record.pk %}" class="flex-1 text-center py-2.5 px-4 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+          Full Observation Detail &rarr;
+        </a>
+      </div>
+
+    </div>
+
+    <!-- Right Column: Prediction Verdict & Visual Confidence (7 cols) -->
+    <div class="lg:col-span-7 space-y-6">
+      
+      <!-- Primary Classification Verdict Card -->
+      <div class="glass-panel p-6 sm:p-8 rounded-3xl space-y-6 border-l-4 
+        {% if record.badge_color == 'emerald' %}border-l-emerald-500 glow-emerald
+        {% elif record.badge_color == 'amber' %}border-l-amber-500 glow-amber
+        {% else %}border-l-rose-500 glow-rose{% endif %}">
+        
+        <div class="flex items-center justify-between">
+          <span class="text-xs uppercase tracking-wider font-semibold text-slate-400">Classified Rainfall Category</span>
+          <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5
+            {% if record.badge_color == 'emerald' %}bg-emerald-500/10 text-emerald-300 border border-emerald-500/30
+            {% elif record.badge_color == 'amber' %}bg-amber-500/10 text-amber-300 border border-amber-500/30
+            {% else %}bg-rose-500/10 text-rose-300 border border-rose-500/30{% endif %}">
+            <span class="w-2 h-2 rounded-full {% if record.badge_color == 'emerald' %}bg-emerald-400{% elif record.badge_color == 'amber' %}bg-amber-400{% else %}bg-rose-400{% endif %} animate-pulse"></span>
+            Severity: {{ record.risk_level }}
+          </span>
+        </div>
+
+        <div>
+          <h1 class="font-heading text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+            {{ record.display_name }}
+          </h1>
+          <p class="text-sm text-sky-400 font-medium mt-1.5 flex items-center gap-1.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Calibrated Precipitation Likelihood: {{ record.rain_probability_range }}
+          </p>
+        </div>
+
+        <!-- Confidence Gauge & Percentage Visualization -->
+        <div class="space-y-2 pt-2">
+          <div class="flex justify-between items-baseline text-xs font-mono">
+            <span class="text-slate-400 font-semibold uppercase tracking-wider">Prediction Confidence</span>
+            <span class="font-extrabold text-2xl text-white">{{ record.confidence_percent }}%</span>
+          </div>
+          <div class="w-full bg-slate-950 rounded-full h-3.5 overflow-hidden p-0.5 border border-slate-800 shadow-inner"
+               role="progressbar" aria-valuenow="{{ record.confidence_percent }}" aria-valuemin="0" aria-valuemax="100" aria-label="Prediction Confidence">
+            <div class="h-full rounded-full transition-all duration-700
+              {% if record.badge_color == 'emerald' %}bg-gradient-to-r from-emerald-500 to-teal-400
+              {% elif record.badge_color == 'amber' %}bg-gradient-to-r from-amber-500 to-yellow-400
+              {% else %}bg-gradient-to-r from-rose-600 to-pink-500{% endif %}"
+              style="width: {{ record.confidence_percent }}%">
+            </div>
+          </div>
+          <div class="flex justify-between text-[11px] text-slate-500 font-mono">
+            <span>0%</span>
+            <span>Certainty Bracket: {% if record.confidence >= 0.7 %}High{% elif record.confidence >= 0.5 %}Moderate{% else %}Borderline{% endif %}</span>
+            <span>100%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Probability Distribution Card (Exact Format Requested) -->
+      <div class="glass-panel p-6 sm:p-7 rounded-3xl space-y-5">
+        <div class="flex items-center justify-between">
+          <h2 class="font-heading text-base font-bold text-white">Probability Distribution</h2>
+          <span class="text-xs font-mono text-slate-400">Softmax Output Vector</span>
+        </div>
+
+        <!-- Horizontal Probability Chart Container -->
+        <div class="h-44 relative">
+          <canvas id="probabilityChart"></canvas>
+        </div>
+
+        <!-- Formatted Probability Breakdown Table -->
+        <div class="space-y-2.5 pt-2 border-t border-slate-800">
+          
+          <!-- Low to Medium Rain -->
+          <div class="flex items-center justify-between p-3 rounded-xl bg-slate-950/80 border border-slate-800/80 {% if record.predicted_class == 'Low_to_Medium_Rain' %}ring-1 ring-amber-500/50 bg-amber-950/10{% endif %}">
+            <div class="flex items-center space-x-3">
+              <span class="w-3 h-3 rounded-full bg-amber-400 shrink-0"></span>
+              <span class="text-sm font-medium text-slate-200 font-mono">Low to Medium Rain</span>
+            </div>
+            <div class="flex items-center space-x-3">
+              <span class="text-xs text-slate-500 font-mono hidden sm:inline">(Class 0)</span>
+              <span class="font-mono font-bold text-base text-amber-400">{{ record.prob_low_pct }}%</span>
+            </div>
+          </div>
+
+          <!-- Medium to Heavy Rain -->
+          <div class="flex items-center justify-between p-3 rounded-xl bg-slate-950/80 border border-slate-800/80 {% if record.predicted_class == 'Medium_to_Heavy_Rain' %}ring-1 ring-rose-500/50 bg-rose-950/10{% endif %}">
+            <div class="flex items-center space-x-3">
+              <span class="w-3 h-3 rounded-full bg-rose-500 shrink-0"></span>
+              <span class="text-sm font-medium text-slate-200 font-mono">Medium to Heavy Rain</span>
+            </div>
+            <div class="flex items-center space-x-3">
+              <span class="text-xs text-slate-500 font-mono hidden sm:inline">(Class 1)</span>
+              <span class="font-mono font-bold text-base text-rose-400">{{ record.prob_med_pct }}%</span>
+            </div>
+          </div>
+
+          <!-- No to Low Rain -->
+          <div class="flex items-center justify-between p-3 rounded-xl bg-slate-950/80 border border-slate-800/80 {% if record.predicted_class == 'No_to_Low_Rain' %}ring-1 ring-emerald-500/50 bg-emerald-950/10{% endif %}">
+            <div class="flex items-center space-x-3">
+              <span class="w-3 h-3 rounded-full bg-emerald-400 shrink-0"></span>
+              <span class="text-sm font-medium text-slate-200 font-mono">No to Low Rain</span>
+            </div>
+            <div class="flex items-center space-x-3">
+              <span class="text-xs text-slate-500 font-mono hidden sm:inline">(Class 2)</span>
+              <span class="font-mono font-bold text-base text-emerald-400">{{ record.prob_no_pct }}%</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Meteorological Advisory & Recommendations -->
+      <div class="glass-panel p-6 rounded-3xl space-y-3 bg-gradient-to-br from-slate-900/90 to-slate-950/90">
+        <div class="flex items-center gap-2 text-sky-400 font-semibold text-sm">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          Meteorological Assessment &amp; Advisory
+        </div>
+        <p class="text-xs text-slate-300 leading-relaxed">{{ record.meteorological_context }}</p>
+        <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-200 flex items-start gap-2.5">
+          <span class="font-bold text-sky-400 shrink-0 uppercase tracking-wider text-[10px] mt-0.5">Advisory Action:</span>
+          <span>{{ record.advisory_action }}</span>
+        </div>
+      </div>
+
+      <!-- Navigation Action Buttons Bar -->
+      <div class="flex flex-col sm:flex-row items-center gap-3 pt-2">
+        <a href="{% url 'predictions:predict' %}" class="w-full sm:flex-1 py-3 px-5 rounded-xl text-center font-semibold text-sm bg-gradient-to-r from-sky-500 to-indigo-600 text-white shadow-lg shadow-sky-500/20 hover:from-sky-400 hover:to-indigo-500 transition-all duration-200 hover:scale-[1.01]">
+          Analyze Another Image
+        </a>
+        <a href="{% url 'predictions:history' %}" class="w-full sm:flex-1 py-3 px-5 rounded-xl text-center font-semibold text-sm bg-slate-900 border border-slate-700 text-slate-200 hover:text-white hover:bg-slate-800 transition">
+          View History
+        </a>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/charts.js' %}"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    renderProbabilityBarChart(
+      'probabilityChart',
+      {{ record.prob_low_pct }},
+      {{ record.prob_med_pct }},
+      {{ record.prob_no_pct }}
+    );
+  });
+</script>
+{% endblock %}

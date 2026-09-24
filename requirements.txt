@@ -1,0 +1,43 @@
+# ==============================================================================
+# SKYsense AI: Verified Production & Research Dependencies
+# ==============================================================================
+# Python Version: >= 3.10, < 3.13 (Verified on Python 3.11)
+# Operating Systems: Linux (Ubuntu 22.04/24.04), Windows 10/11, macOS (ARM/Intel)
+# ==============================================================================
+
+# --- Django Web Framework & Core ---
+Django>=5.2.0,<5.3.0
+asgiref>=3.8.0,<4.0.0
+sqlparse>=0.5.0,<0.7.0
+
+# --- Production Static Asset Serving ---
+whitenoise>=6.6.0,<7.0.0
+
+# --- Computer Vision & Image Processing ---
+Pillow>=10.0.0,<13.0.0
+
+# --- Deep Learning Engine (TensorFlow / Keras) ---
+tensorflow>=2.16.0,<2.22.0
+keras>=3.0.0,<4.0.0
+h5py>=3.10.0,<4.0.0
+
+# --- Scientific Computing & Metrics ---
+numpy>=1.26.0,<3.0.0
+pandas>=2.1.0,<4.0.0
+scikit-learn>=1.4.0,<2.0.0
+scipy>=1.12.0,<2.0.0
+
+# --- Data Visualization ---
+matplotlib>=3.8.0,<4.0.0
+seaborn>=0.13.0,<0.14.0
+
+# --- HTTP Networking & Simulated IoT Client ---
+requests>=2.31.0,<3.0.0
+
+# --- Production WSGI Server (Linux Deployment) ---
+# Note: On Windows, use wait-ress or standard development server for testing.
+gunicorn>=21.2.0,<24.0.0; sys_platform != "win32"
+
+# --- Optional Production Database (PostgreSQL) ---
+# Uncomment when connecting to a production PostgreSQL instance:
+# psycopg2-binary>=2.9.9,<3.0.0

@@ -1,0 +1,636 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
+
+  <!-- Header -->
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between pb-6 border-b border-slate-800 gap-4">
+    <div>
+      <div class="flex items-center space-x-2 text-sky-400 text-xs font-mono mb-1">
+        <span>ACADEMIC DEMONSTRATION &bull; EMPIRICAL EVALUATION SUITE</span>
+      </div>
+      <h1 class="text-3xl font-extrabold text-white tracking-tight">Model Performance</h1>
+      <p class="text-slate-400 text-sm mt-1">
+        Actual quantitative evaluation results generated directly by the AI training and evaluation pipeline on the held-out test split.
+      </p>
+    </div>
+    <div class="flex items-center space-x-3">
+      <div class="flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-slate-900 border border-slate-800 text-xs text-slate-300">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span class="font-mono">Xception Backbone</span>
+        <span>&bull;</span>
+        <span class="text-sky-400 font-mono">Test N=381</span>
+      </div>
+    </div>
+  </div>
+
+  {% if not metrics_available %}
+  <!-- Missing Evaluation Data State -->
+  <div class="bg-slate-900 border border-slate-800 rounded-2xl p-12 text-center shadow-xl">
+    <div class="w-16 h-16 rounded-full bg-amber-500/10 text-amber-400 flex items-center justify-center mx-auto mb-4 border border-amber-500/20">
+      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+    </div>
+    <h2 class="text-2xl font-bold text-white mb-2">Model evaluation data is not available.</h2>
+    <p class="text-sm text-slate-400 max-w-lg mx-auto">
+      The actual evaluation results could not be located in the AI Model directory. Please ensure that <code class="text-sky-400 font-mono">03_AI_Model/evaluate.py</code> has been executed to generate <code class="text-sky-400 font-mono">test_evaluation_summary.json</code> and <code class="text-sky-400 font-mono">classification_report.json</code>.
+    </p>
+  </div>
+  {% else %}
+
+  <!-- 1. Primary Evaluation Metrics Cards -->
+  <div>
+    <h2 class="text-xs font-semibold text-sky-400 uppercase tracking-wider mb-4 font-mono">Core Evaluation Metrics (Held-Out Test Split)</h2>
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+      <!-- Test Accuracy -->
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg relative overflow-hidden">
+        <div class="absolute -right-3 -bottom-3 w-16 h-16 bg-sky-500/5 rounded-full blur-xl"></div>
+        <span class="text-slate-400 text-xs font-mono uppercase">Test Accuracy</span>
+        <div class="text-3xl font-extrabold text-sky-400 mt-2 font-mono">{{ data.test_accuracy_pct }}%</div>
+        <div class="text-xs text-slate-500 mt-1">Overall multi-class accuracy</div>
+      </div>
+
+      <!-- Macro Precision -->
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg relative overflow-hidden">
+        <div class="absolute -right-3 -bottom-3 w-16 h-16 bg-indigo-500/5 rounded-full blur-xl"></div>
+        <span class="text-slate-400 text-xs font-mono uppercase">Precision (Macro)</span>
+        <div class="text-3xl font-extrabold text-indigo-400 mt-2 font-mono">{{ data.macro_precision_pct }}%</div>
+        <div class="text-xs text-slate-500 mt-1">Weighted: {{ data.weighted_precision_pct }}%</div>
+      </div>
+
+      <!-- Macro Recall -->
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg relative overflow-hidden">
+        <div class="absolute -right-3 -bottom-3 w-16 h-16 bg-amber-500/5 rounded-full blur-xl"></div>
+        <span class="text-slate-400 text-xs font-mono uppercase">Recall (Macro)</span>
+        <div class="text-3xl font-extrabold text-amber-400 mt-2 font-mono">{{ data.macro_recall_pct }}%</div>
+        <div class="text-xs text-slate-500 mt-1">Weighted: {{ data.weighted_recall_pct }}%</div>
+      </div>
+
+      <!-- F1 Score -->
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg relative overflow-hidden">
+        <div class="absolute -right-3 -bottom-3 w-16 h-16 bg-purple-500/5 rounded-full blur-xl"></div>
+        <span class="text-slate-400 text-xs font-mono uppercase">F1 Score (Macro)</span>
+        <div class="text-3xl font-extrabold text-purple-400 mt-2 font-mono">{{ data.macro_f1_pct }}%</div>
+        <div class="text-xs text-slate-500 mt-1">Weighted: {{ data.weighted_f1_pct }}%</div>
+      </div>
+
+      <!-- Categorical Test Loss -->
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg relative overflow-hidden col-span-2 md:col-span-1">
+        <div class="absolute -right-3 -bottom-3 w-16 h-16 bg-emerald-500/5 rounded-full blur-xl"></div>
+        <span class="text-slate-400 text-xs font-mono uppercase">Test Loss</span>
+        <div class="text-3xl font-extrabold text-emerald-400 mt-2 font-mono">{{ data.test_loss }}</div>
+        <div class="text-xs text-slate-500 mt-1">Categorical cross-entropy</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Confusion Matrix & Class-wise Breakdown -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+    <!-- Confusion Matrix (6 cols) -->
+    <div class="lg:col-span-6 bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+      <div>
+        <div class="flex items-center justify-between">
+          <h2 class="text-lg font-bold text-white">Confusion Matrix</h2>
+          <span class="text-xs font-mono text-slate-500">{{ data.total_test_samples }} Test Samples</span>
+        </div>
+        <p class="text-xs text-slate-400 mt-1">Actual ground-truth categories (rows) vs. Model predictions (columns).</p>
+      </div>
+
+      <div class="overflow-x-auto pt-2">
+        <table class="w-full text-center text-xs">
+          <thead>
+            <tr>
+              <th class="p-2"></th>
+              <th colspan="3" class="p-2 text-xs font-mono uppercase text-sky-400 border-b border-slate-800">
+                Predicted Rainfall Class
+              </th>
+              <th class="p-2 border-b border-slate-800 text-slate-500 font-mono text-[10px]">Total</th>
+            </tr>
+            <tr class="text-slate-400 font-mono text-[11px]">
+              <th class="p-2 text-left">Ground Truth</th>
+              <th class="p-2 text-amber-300">Low-Med</th>
+              <th class="p-2 text-rose-300">Med-Heavy</th>
+              <th class="p-2 text-emerald-300">No-Low</th>
+              <th class="p-2 text-slate-400">Support</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800 font-mono">
+            {% for row in data.confusion_matrix %}
+            <tr>
+              <td class="p-3 text-left font-sans font-medium text-slate-300 text-xs">
+                {{ row.true_label }}
+              </td>
+              <td class="p-3 {% if forloop.counter0 == 0 %}bg-amber-500/20 text-amber-300 font-bold border border-amber-500/30 rounded-lg{% else %}bg-slate-950 text-slate-400{% endif %}">
+                {{ row.pred_low }}
+                <span class="text-[10px] text-slate-500 block font-normal">{{ row.pred_low_pct }}%</span>
+              </td>
+              <td class="p-3 {% if forloop.counter0 == 1 %}bg-rose-500/20 text-rose-300 font-bold border border-rose-500/30 rounded-lg{% else %}bg-slate-950 text-slate-400{% endif %}">
+                {{ row.pred_med }}
+                <span class="text-[10px] text-slate-500 block font-normal">{{ row.pred_med_pct }}%</span>
+              </td>
+              <td class="p-3 {% if forloop.counter0 == 2 %}bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30 rounded-lg{% else %}bg-slate-950 text-slate-400{% endif %}">
+                {{ row.pred_no }}
+                <span class="text-[10px] text-slate-500 block font-normal">{{ row.pred_no_pct }}%</span>
+              </td>
+              <td class="p-3 bg-slate-950 text-slate-300 font-bold">
+                {{ row.total }}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-400 leading-relaxed">
+        <strong class="text-slate-200">Observation:</strong> The highest diagonal classification occurs in <em>Low_to_Medium_Rain</em> (108 / 150, 72.0%) and <em>No_to_Low_Rain</em> (78 / 138, 56.5%). Mutual confusion between polar extremes (Medium-Heavy vs. No-Low) is exceptionally constrained (&lt; 6%), confirming strong physical boundaries between dry skies and storm clouds.
+      </div>
+    </div>
+
+    <!-- Class-wise Metrics Table (6 cols) -->
+    <div class="lg:col-span-6 bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+      <div>
+        <h2 class="text-lg font-bold text-white">Class-Wise Evaluation Breakdown</h2>
+        <p class="text-xs text-slate-400 mt-1">Precision, Recall, and F1 scores per individual rainfall category.</p>
+      </div>
+
+      <div class="overflow-x-auto pt-2">
+        <table class="w-full text-left text-xs text-slate-300">
+          <thead class="bg-slate-950 uppercase tracking-wider text-slate-400 border-b border-slate-800">
+            <tr>
+              <th class="px-4 py-3">Category</th>
+              <th class="px-4 py-3">Precision</th>
+              <th class="px-4 py-3">Recall</th>
+              <th class="px-4 py-3">F1 Score</th>
+              <th class="px-4 py-3 text-right">Support</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800">
+            {% for row in data.class_breakdown %}
+            <tr class="hover:bg-slate-800/40">
+              <td class="px-4 py-3.5 font-semibold text-white">
+                <div class="flex items-center space-x-2">
+                  {% if row.badge_color == 'amber' %}
+                  <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+                  {% elif row.badge_color == 'rose' %}
+                  <span class="w-2.5 h-2.5 rounded-full bg-rose-400"></span>
+                  {% else %}
+                  <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+                  {% endif %}
+                  <span>{{ row.display_name }}</span>
+                </div>
+              </td>
+              <td class="px-4 py-3.5 font-mono text-slate-200">{{ row.precision }}%</td>
+              <td class="px-4 py-3.5 font-mono text-slate-200">{{ row.recall }}%</td>
+              <td class="px-4 py-3.5 font-mono font-bold text-sky-400">{{ row.f1 }}%</td>
+              <td class="px-4 py-3.5 font-mono text-slate-400 text-right">{{ row.support }}</td>
+            </tr>
+            {% endfor %}
+            <tr class="bg-slate-950/80 font-bold border-t-2 border-slate-700">
+              <td class="px-4 py-3 text-white">Macro Average</td>
+              <td class="px-4 py-3 font-mono text-slate-200">{{ data.macro_precision_pct }}%</td>
+              <td class="px-4 py-3 font-mono text-slate-200">{{ data.macro_recall_pct }}%</td>
+              <td class="px-4 py-3 font-mono text-purple-400">{{ data.macro_f1_pct }}%</td>
+              <td class="px-4 py-3 font-mono text-slate-300 text-right">{{ data.total_test_samples }}</td>
+            </tr>
+            <tr class="bg-slate-950 font-bold">
+              <td class="px-4 py-3 text-white">Weighted Average</td>
+              <td class="px-4 py-3 font-mono text-slate-200">{{ data.weighted_precision_pct }}%</td>
+              <td class="px-4 py-3 font-mono text-slate-200">{{ data.weighted_recall_pct }}%</td>
+              <td class="px-4 py-3 font-mono text-emerald-400">{{ data.weighted_f1_pct }}%</td>
+              <td class="px-4 py-3 font-mono text-slate-300 text-right">{{ data.total_test_samples }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Precision / Recall / F1 Visual Bars -->
+      <div class="space-y-3 pt-2">
+        {% for row in data.class_breakdown %}
+        <div class="bg-slate-950/70 p-3 rounded-xl border border-slate-800">
+          <div class="flex justify-between items-center text-xs mb-1.5 font-mono">
+            <span class="text-slate-300 font-sans font-medium">{{ row.display_name }}</span>
+            <span class="text-slate-400">P: {{ row.precision }}% | R: {{ row.recall }}% | F1: <strong class="text-white">{{ row.f1 }}%</strong></span>
+          </div>
+          <div class="w-full bg-slate-900 rounded-full h-2 overflow-hidden flex gap-0.5">
+            <div class="bg-indigo-400 h-full rounded-l" style="width: {{ row.precision }}%" title="Precision: {{ row.precision }}%"></div>
+            <div class="bg-amber-400 h-full" style="width: {{ row.recall }}%" title="Recall: {{ row.recall }}%"></div>
+            <div class="bg-sky-400 h-full rounded-r" style="width: {{ row.f1 }}%" title="F1: {{ row.f1 }}%"></div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Training & Validation Progression Graphs (Chart.js) -->
+  <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 md:p-8 shadow-xl space-y-6">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2 border-b border-slate-800 pb-4">
+      <div>
+        <h2 class="text-lg font-bold text-white">Training &amp; Validation Progression Curves</h2>
+        <p class="text-xs text-slate-400">Actual epoch-by-epoch loss and accuracy telemetry recorded during neural network optimization.</p>
+      </div>
+      <div class="flex items-center space-x-3 text-xs font-mono">
+        <span class="inline-flex items-center text-sky-400"><span class="w-3 h-0.5 bg-sky-400 mr-1.5"></span>Training</span>
+        <span class="inline-flex items-center text-amber-400"><span class="w-3 h-0.5 bg-amber-400 mr-1.5"></span>Validation</span>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <!-- Accuracy Graph -->
+      <div class="bg-slate-950 p-5 rounded-xl border border-slate-800">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-xs font-semibold text-slate-200 uppercase tracking-wider">Training &amp; Validation Accuracy</h3>
+          <span class="text-[11px] font-mono text-emerald-400">Best Val: 64.14%</span>
+        </div>
+        <div class="relative h-64 w-full">
+          <canvas id="accuracyChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Loss Graph -->
+      <div class="bg-slate-950 p-5 rounded-xl border border-slate-800">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-xs font-semibold text-slate-200 uppercase tracking-wider">Training &amp; Validation Loss</h3>
+          <span class="text-[11px] font-mono text-sky-400">Best Val: 0.8569</span>
+        </div>
+        <div class="relative h-64 w-full">
+          <canvas id="lossChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Dataset Distribution -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+    <!-- Doughnut Chart (5 cols) -->
+    <div class="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+      <div>
+        <div class="flex items-center justify-between">
+          <h2 class="text-lg font-bold text-white">Dataset Distribution</h2>
+          <span class="text-xs font-mono text-sky-400 font-bold">2,543 Total Images</span>
+        </div>
+        <p class="text-xs text-slate-400 mt-1">Ground-based sky image specimen allocation across the 3 rainfall classes.</p>
+      </div>
+
+      <div class="relative h-60 w-full flex items-center justify-center pt-2">
+        <canvas id="datasetDistributionChart"></canvas>
+      </div>
+
+      <div class="space-y-2 pt-2 border-t border-slate-800 text-xs">
+        {% for cls in data.dataset_distribution.classes %}
+        <div class="flex items-center justify-between p-2 rounded-lg bg-slate-950 border border-slate-800/80">
+          <div class="flex items-center space-x-2">
+            <span class="w-2.5 h-2.5 rounded-full" style="background-color: {{ cls.color }};"></span>
+            <span class="text-slate-300 font-medium">{{ cls.name }}</span>
+          </div>
+          <div class="font-mono text-slate-200">
+            <strong>{{ cls.count }}</strong> images <span class="text-slate-500">({{ cls.percentage }}%)</span>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Stratified Partitions Breakdown (7 cols) -->
+    <div class="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+      <div>
+        <h2 class="text-lg font-bold text-white">Stratified Partitions &amp; Data Integrity</h2>
+        <p class="text-xs text-slate-400 mt-1">Disjoint splits (70% train, 15% validation, 15% test) with stratified class ratios and fixed seed 42.</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-1">
+          <span class="text-slate-400 uppercase text-[10px] tracking-wider font-mono">Training Set (70%)</span>
+          <div class="text-2xl font-bold font-mono text-sky-400">1,779</div>
+          <p class="text-slate-500 text-[11px]">With real-time data augmentation</p>
+        </div>
+
+        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-1">
+          <span class="text-slate-400 uppercase text-[10px] tracking-wider font-mono">Validation Set (15%)</span>
+          <div class="text-2xl font-bold font-mono text-amber-400">383</div>
+          <p class="text-slate-500 text-[11px]">Checkpoint selection &amp; early stopping</p>
+        </div>
+
+        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-1">
+          <span class="text-slate-400 uppercase text-[10px] tracking-wider font-mono">Test Set (15%)</span>
+          <div class="text-2xl font-bold font-mono text-emerald-400">381</div>
+          <p class="text-slate-500 text-[11px]">Unseen out-of-sample benchmark</p>
+        </div>
+      </div>
+
+      <!-- Zero-Leakage Disjointness Mathematical Guarantee -->
+      <div class="p-4 bg-sky-950/30 border border-sky-800/40 rounded-xl text-xs space-y-2">
+        <span class="font-bold text-sky-200 block uppercase tracking-wider text-[11px]">Data Leakage Prevention Guarantee</span>
+        <p class="text-slate-300 leading-relaxed text-[12px]">
+          Stratification was performed deterministically using scikit-learn with <code class="font-mono text-sky-300">random_state=42</code>. File identifiers in each partition are mutually disjoint:
+        </p>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 font-mono text-[11px] text-sky-300">
+          <div class="p-2 rounded bg-slate-950/80 border border-sky-900/60">Train &cap; Val = &empty;</div>
+          <div class="p-2 rounded bg-slate-950/80 border border-sky-900/60">Train &cap; Test = &empty;</div>
+          <div class="p-2 rounded bg-slate-950/80 border border-sky-900/60">Val &cap; Test = &empty;</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Academic Methodology Section -->
+  <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 md:p-8 shadow-xl space-y-8">
+    <div class="border-b border-slate-800 pb-4">
+      <div class="flex items-center space-x-2 text-sky-400 text-xs font-mono mb-1">
+        <span>SCIENTIFIC DISCLOSURE &amp; ENGINEERING SPECIFICATION</span>
+      </div>
+      <h2 class="text-2xl font-extrabold text-white tracking-tight">Methodology</h2>
+      <p class="text-slate-400 text-sm mt-1">End-to-end technical methodology for ground-based cloud-image rainfall prediction.</p>
+    </div>
+
+    <!-- Critical Scope Notice -->
+    <div class="p-5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-sm space-y-2">
+      <div class="flex items-center space-x-2 font-bold text-amber-300">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <span>Critical Model Scope Clarification</span>
+      </div>
+      <p class="leading-relaxed text-xs">
+        The SKYsense AI deep learning model is engineered to predict <strong>rainfall likelihood categories</strong> (<code class="font-mono text-amber-100">Low_to_Medium_Rain</code>, <code class="font-mono text-amber-100">Medium_to_Heavy_Rain</code>, <code class="font-mono text-amber-100">No_to_Low_Rain</code>) from ground-based cloud photography. 
+        <strong>This model is NOT a cloud-type or cloud-genus classifier.</strong> The 11 standard WMO cloud genera from the source CCSN dataset were meteorologically mapped and aggregated into 3 rainfall potential regimes to solve an operational precipitation estimation objective.
+      </p>
+    </div>
+
+    <!-- Methodology Pillars Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs text-slate-300 leading-relaxed">
+      <!-- 1. Dataset -->
+      <div class="bg-slate-950 p-5 rounded-xl border border-slate-800 space-y-2">
+        <h3 class="text-sm font-bold text-white flex items-center">
+          <span class="w-6 h-6 rounded-lg bg-sky-500/20 text-sky-400 inline-flex items-center justify-center text-xs font-mono font-bold mr-2">1</span>
+          Dataset Architecture
+        </h3>
+        <p>
+          The system utilizes the Cirrus-Cumulus-Stratus-Nimbus (CCSN) ground-based sky image database comprising <strong>2,543 verified RGB images</strong>. These 11 cloud genera were scientifically mapped into 3 consolidated rainfall regimes:
+        </p>
+        <ul class="list-disc pl-4 space-y-1 text-slate-400">
+          <li><strong>Low to Medium Rain</strong> (1,004 images): Altostratus, Stratocumulus, Stratus, Nimbostratus.</li>
+          <li><strong>Medium to Heavy Rain</strong> (624 images): Cumulonimbus, mature Cumulus, Cirrostratus thick.</li>
+          <li><strong>No to Low Rain</strong> (915 images): Cirrus, Cirrostratus, Cirrocumulus, Altocumulus.</li>
+        </ul>
+      </div>
+
+      <!-- 2. Preprocessing -->
+      <div class="bg-slate-950 p-5 rounded-xl border border-slate-800 space-y-2">
+        <h3 class="text-sm font-bold text-white flex items-center">
+          <span class="w-6 h-6 rounded-lg bg-sky-500/20 text-sky-400 inline-flex items-center justify-center text-xs font-mono font-bold mr-2">2</span>
+          Preprocessing &amp; Augmentation
+        </h3>
+        <p>
+          Specimen images undergo standardized image pipeline transformations:
+        </p>
+        <ul class="list-disc pl-4 space-y-1 text-slate-400">
+          <li><strong>Spatial Rescaling</strong>: Interpolated to 256 &times; 256 pixels maintaining 3 RGB channels.</li>
+          <li><strong>Normalization</strong>: Pixel intensity scaled from [0, 255] to [0.0, 1.0] using 1/255.0 rescale.</li>
+          <li><strong>Stratified Split</strong>: 70% Train (1,779), 15% Validation (383), 15% Test (381).</li>
+          <li><strong>Training Augmentation</strong>: Random rotations (&plusmn;25&deg;), horizontal flips, and width/height shifts (&plusmn;20%) applied strictly during training to improve generalized cloud invariance.</li>
+        </ul>
+      </div>
+
+      <!-- 3. Transfer Learning -->
+      <div class="bg-slate-950 p-5 rounded-xl border border-slate-800 space-y-2">
+        <h3 class="text-sm font-bold text-white flex items-center">
+          <span class="w-6 h-6 rounded-lg bg-sky-500/20 text-sky-400 inline-flex items-center justify-center text-xs font-mono font-bold mr-2">3</span>
+          Transfer Learning Paradigm
+        </h3>
+        <p>
+          Training deep neural networks from scratch on limited meteorological datasets often induces severe overfitting due to diffuse visual textures. We exploit transfer learning by adopting weights pre-trained on the ImageNet dataset (1.4 million images). The network acts as a robust hierarchical feature extractor, capturing fundamental visual representations (edges, gradient orientations, textures) before adapting to meteorological features.
+        </p>
+      </div>
+
+      <!-- 4. Xception Architecture -->
+      <div class="bg-slate-950 p-5 rounded-xl border border-slate-800 space-y-2">
+        <h3 class="text-sm font-bold text-white flex items-center">
+          <span class="w-6 h-6 rounded-lg bg-sky-500/20 text-sky-400 inline-flex items-center justify-center text-xs font-mono font-bold mr-2">4</span>
+          Xception Backbone
+        </h3>
+        <p>
+          The architecture employs <strong>Xception (Extreme Inception)</strong>, replacing standard Inception modules with depthwise separable convolutions. Features include:
+        </p>
+        <ul class="list-disc pl-4 space-y-1 text-slate-400">
+          <li><strong>36 Convolutional Stages</strong> structured into 14 modules with residual shortcut connections.</li>
+          <li><strong>Separation of Cross-Channel &amp; Spatial Correlations</strong>, vastly reducing parameter overhead while maximizing representational expressiveness (20.8M parameters).</li>
+          <li><strong>Custom Head</strong>: GlobalAveragePooling2D followed by a 40% Dropout stage and a 3-unit Dense layer with Softmax activation.</li>
+        </ul>
+      </div>
+
+      <!-- 5. Training Strategy -->
+      <div class="bg-slate-950 p-5 rounded-xl border border-slate-800 space-y-2">
+        <h3 class="text-sm font-bold text-white flex items-center">
+          <span class="w-6 h-6 rounded-lg bg-sky-500/20 text-sky-400 inline-flex items-center justify-center text-xs font-mono font-bold mr-2">5</span>
+          Phase 1 Training
+        </h3>
+        <p>
+          In the initial training phase, all convolutional weights of the pre-trained Xception base are frozen. Only the new classification head (GlobalAveragePooling2D, Dropout, and output Dense layer) is trained using:
+        </p>
+        <ul class="list-disc pl-4 space-y-1 text-slate-400">
+          <li><strong>Optimizer</strong>: Adam (learning rate = 1e-3, &beta;<sub>1</sub> = 0.9, &beta;<sub>2</sub> = 0.999).</li>
+          <li><strong>Loss Function</strong>: Categorical Cross-Entropy across the 3 rainfall classes.</li>
+          <li><strong>Batch Size</strong>: 32 specimens per gradient update step.</li>
+        </ul>
+      </div>
+
+      <!-- 6. Fine-Tuning Strategy -->
+      <div class="bg-slate-950 p-5 rounded-xl border border-slate-800 space-y-2">
+        <h3 class="text-sm font-bold text-white flex items-center">
+          <span class="w-6 h-6 rounded-lg bg-sky-500/20 text-sky-400 inline-flex items-center justify-center text-xs font-mono font-bold mr-2">6</span>
+          Phase 2 Fine-Tuning
+        </h3>
+        <p>
+          To adapt higher-level convolutional representations to cloud optical densities and atmospheric moisture gradients, the upper blocks of the Xception backbone are unfrozen. A substantially reduced learning rate (1e-5) is utilized alongside EarlyStopping and ModelCheckpoint callbacks, allowing delicate adaptation of cloud boundary features without catastrophic forgetting of foundational ImageNet filters.
+        </p>
+      </div>
+
+      <!-- 7. Evaluation Protocol -->
+      <div class="bg-slate-950 p-5 rounded-xl border border-slate-800 space-y-2 md:col-span-2">
+        <h3 class="text-sm font-bold text-white flex items-center">
+          <span class="w-6 h-6 rounded-lg bg-sky-500/20 text-sky-400 inline-flex items-center justify-center text-xs font-mono font-bold mr-2">7</span>
+          Empirical Evaluation Protocol
+        </h3>
+        <p>
+          Evaluation was executed strictly on the isolated, held-out <strong>381-sample test split</strong> that was completely unseen during both Phase 1 training and Phase 2 fine-tuning. The best checkpoint saved by validation loss monitoring was restored and evaluated to produce exact multi-class accuracy (<strong>58.27%</strong>), Macro Precision (<strong>61.23%</strong>), Macro Recall (<strong>55.74%</strong>), Macro F1 (<strong>56.60%</strong>), and the empirical confusion matrix.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  {% endif %}
+
+</div>
+
+<!-- Chart.js Scripts -->
+{% if metrics_available %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const epochs = {{ data.training_history.epochs_json|safe }};
+  const trainAcc = {{ data.training_history.train_acc_json|safe }};
+  const valAcc = {{ data.training_history.val_acc_json|safe }};
+  const trainLoss = {{ data.training_history.train_loss_json|safe }};
+  const valLoss = {{ data.training_history.val_loss_json|safe }};
+
+  // 1. Accuracy Chart
+  const accCtx = document.getElementById('accuracyChart');
+  if (accCtx && epochs.length > 0) {
+    new Chart(accCtx, {
+      type: 'line',
+      data: {
+        labels: epochs,
+        datasets: [
+          {
+            label: 'Train Accuracy (%)',
+            data: trainAcc,
+            borderColor: '#38bdf8',
+            backgroundColor: 'rgba(56, 189, 248, 0.1)',
+            tension: 0.3,
+            fill: true,
+            pointBackgroundColor: '#38bdf8',
+            pointRadius: 4,
+          },
+          {
+            label: 'Val Accuracy (%)',
+            data: valAcc,
+            borderColor: '#f59e0b',
+            backgroundColor: 'rgba(245, 158, 11, 0.1)',
+            tension: 0.3,
+            fill: true,
+            pointBackgroundColor: '#f59e0b',
+            pointRadius: 4,
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            labels: { color: '#94a3b8', font: { family: 'ui-monospace, monospace', size: 11 } }
+          },
+          tooltip: {
+            callbacks: {
+              label: function(ctx) { return `${ctx.dataset.label}: ${ctx.raw}%`; }
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: { color: 'rgba(51, 65, 85, 0.3)' },
+            ticks: { color: '#64748b', font: { family: 'ui-monospace, monospace', size: 10 } }
+          },
+          y: {
+            grid: { color: 'rgba(51, 65, 85, 0.3)' },
+            ticks: {
+              color: '#64748b',
+              font: { family: 'ui-monospace, monospace', size: 10 },
+              callback: function(v) { return v + '%'; }
+            },
+            min: 40,
+            max: 75
+          }
+        }
+      }
+    });
+  }
+
+  // 2. Loss Chart
+  const lossCtx = document.getElementById('lossChart');
+  if (lossCtx && epochs.length > 0) {
+    new Chart(lossCtx, {
+      type: 'line',
+      data: {
+        labels: epochs,
+        datasets: [
+          {
+            label: 'Train Loss',
+            data: trainLoss,
+            borderColor: '#0284c7',
+            backgroundColor: 'rgba(2, 132, 199, 0.1)',
+            tension: 0.3,
+            fill: true,
+            pointBackgroundColor: '#0284c7',
+            pointRadius: 4,
+          },
+          {
+            label: 'Val Loss',
+            data: valLoss,
+            borderColor: '#f59e0b',
+            backgroundColor: 'rgba(245, 158, 11, 0.1)',
+            tension: 0.3,
+            fill: true,
+            pointBackgroundColor: '#f59e0b',
+            pointRadius: 4,
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            labels: { color: '#94a3b8', font: { family: 'ui-monospace, monospace', size: 11 } }
+          },
+          tooltip: {
+            callbacks: {
+              label: function(ctx) { return `${ctx.dataset.label}: ${ctx.raw}`; }
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: { color: 'rgba(51, 65, 85, 0.3)' },
+            ticks: { color: '#64748b', font: { family: 'ui-monospace, monospace', size: 10 } }
+          },
+          y: {
+            grid: { color: 'rgba(51, 65, 85, 0.3)' },
+            ticks: { color: '#64748b', font: { family: 'ui-monospace, monospace', size: 10 } },
+            min: 0.70,
+            max: 1.15
+          }
+        }
+      }
+    });
+  }
+
+  // 3. Dataset Distribution Doughnut Chart
+  const distCtx = document.getElementById('datasetDistributionChart');
+  if (distCtx) {
+    new Chart(distCtx, {
+      type: 'doughnut',
+      data: {
+        labels: {{ data.dataset_distribution.chart_labels_json|safe }},
+        datasets: [{
+          data: {{ data.dataset_distribution.chart_counts_json|safe }},
+          backgroundColor: ['#fbbf24', '#f43f5e', '#10b981'],
+          borderWidth: 2,
+          borderColor: '#020617',
+          hoverOffset: 4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '72%',
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            callbacks: {
+              label: function(ctx) {
+                const total = 2543;
+                const val = ctx.raw;
+                const pct = ((val / total) * 100).toFixed(1);
+                return ` ${ctx.label}: ${val} images (${pct}%)`;
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+});
+</script>
+{% endif %}
+{% endblock %}

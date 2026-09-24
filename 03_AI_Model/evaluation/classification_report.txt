@@ -1,0 +1,9 @@
+                          precision     recall   f1-score    support
+
+      Low_to_Medium_Rain     0.5400     0.7200     0.6171        150
+    Medium_to_Heavy_Rain     0.6923     0.3871     0.4966         93
+          No_to_Low_Rain     0.6047     0.5652     0.5843        138
+
+                accuracy                           0.5827        381
+               macro avg     0.6123     0.5574     0.5660        381
+            weighted avg     0.6006     0.5827     0.5758        381
