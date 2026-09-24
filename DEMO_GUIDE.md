@@ -7,6 +7,8 @@
 
 ---
 
+d:\personal\SkySense_AI\03_AI_Model\.venv\Scripts\python.exe manage.py runserver 127.0.0.1:8000
+
 ## 1. Pre-Flight Setup & Environment Checklist
 
 Complete these verification steps **15 minutes before** entering the examination room:

@@ -416,7 +416,7 @@ The project includes an automated regression test suite comprising **87 tests** 
 
 ```text
 tests/
-├── test_01_django_loads.py           # Core settings, WSGI/ASGI initializers
+├── test_01_django_app_loads.py       # Core settings, WSGI/ASGI initializers
 ├── test_02_home_page.py              # Landing page rendering, navigation links
 ├── test_03_login.py                  # User authentication & invalid credentials
 ├── test_04_registration.py           # New user signup & duplicate rejection
@@ -424,12 +424,13 @@ tests/
 ├── test_06_prediction_model.py       # PredictionRecord ORM schema & constraints
 ├── test_07_image_upload_validation.py # File extension, MIME, size limits
 ├── test_08_ai_inference.py           # Inference service singleton & tensor output
-├── test_09_database_creation.py      # Database record creation & metadata storage
+├── test_09_prediction_database_creation.py # Database record creation & metadata storage
 ├── test_10_prediction_history.py     # History querying, filtering, user isolation
 ├── test_11_api_endpoint.py           # REST API requests, JSON formatting, errors
-├── test_12_invalid_images.py         # Corrupted images, truncated headers
-├── test_13_unsupported_files.py      # Executables, PDF, text payloads rejection
-└── test_14_security_hardening.py     # Path traversal, UUID storage, CSRF headers
+├── test_12_invalid_image_handling.py # Corrupted images, truncated headers
+├── test_13_unsupported_file_handling.py # Executables, PDF, text payloads rejection
+├── test_14_security_hardening.py     # Path traversal, UUID storage, CSRF headers
+└── test_15_demo_mode.py              # Demo page rendering, interactions, context
 ```
 
 ### Run Entire Test Suite
@@ -444,7 +445,7 @@ python manage.py test tests
 
 Expected Output:
 ```text
-Ran 87 tests in 18.421s
+Ran 87 tests in 42.736s
 
 OK
 ```
@@ -531,6 +532,7 @@ For thermodynamic and cloud microphysics research foundations, see [RESEARCH_NOT
 | [**API_DOCUMENTATION.md**](API_DOCUMENTATION.md) | REST API endpoints, multipart parameters, status codes, curl & Python SDK examples. |
 | [**DEPLOYMENT.md**](DEPLOYMENT.md) | Production server setup, Nginx reverse proxy, Gunicorn systemd unit, SSL hardening. |
 | [**DEMO_GUIDE.md**](DEMO_GUIDE.md) | 15-minute Master's defense demonstration protocol, live walkthrough script, Q&A defense. |
+| [**MASTER_RULES_AUDIT.md**](MASTER_RULES_AUDIT.md) | Full compliance audit against 20 master development rules and final goal checklist verification. |
 | [**RESEARCH_NOTES.md**](RESEARCH_NOTES.md) | Atmospheric physics, Bergeron-Findeisen process, CNN architecture comparisons. |
 
 ---
