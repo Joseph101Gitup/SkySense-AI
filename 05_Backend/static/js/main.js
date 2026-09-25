@@ -12,39 +12,64 @@ document.addEventListener('DOMContentLoaded', () => {
     const mobileThemeToggleBtn = document.getElementById('mobile-theme-toggle-btn');
     const themeIconDark = document.getElementById('theme-icon-dark');
     const themeIconLight = document.getElementById('theme-icon-light');
+    const mobileThemeIconDark = document.getElementById('mobile-theme-icon-dark');
+    const mobileThemeIconLight = document.getElementById('mobile-theme-icon-light');
 
     function applyTheme(theme) {
-        if (theme === 'light') {
+        const isLight = theme === 'light';
+        if (isLight) {
             htmlElement.classList.remove('dark');
             htmlElement.classList.add('light');
             if (themeIconDark) themeIconDark.classList.remove('hidden');
             if (themeIconLight) themeIconLight.classList.add('hidden');
+            if (mobileThemeIconDark) mobileThemeIconDark.classList.remove('hidden');
+            if (mobileThemeIconLight) mobileThemeIconLight.classList.add('hidden');
             localStorage.setItem('skysense_theme', 'light');
         } else {
             htmlElement.classList.remove('light');
             htmlElement.classList.add('dark');
             if (themeIconDark) themeIconDark.classList.add('hidden');
             if (themeIconLight) themeIconLight.classList.remove('hidden');
+            if (mobileThemeIconDark) mobileThemeIconDark.classList.add('hidden');
+            if (mobileThemeIconLight) mobileThemeIconLight.classList.remove('hidden');
             localStorage.setItem('skysense_theme', 'dark');
+        }
+
+        const labelText = isLight ? 'Switch to Dark Mode' : 'Switch to Light Mode';
+        if (themeToggleBtn) {
+            themeToggleBtn.setAttribute('title', labelText);
+            themeToggleBtn.setAttribute('aria-label', labelText);
+        }
+        if (mobileThemeToggleBtn) {
+            mobileThemeToggleBtn.setAttribute('title', labelText);
+            mobileThemeToggleBtn.setAttribute('aria-label', labelText);
         }
 
         // Update Chart.js defaults if Chart is loaded
         if (window.Chart) {
-            Chart.defaults.color = theme === 'light' ? '#64748B' : '#94A3B8';
+            Chart.defaults.color = isLight ? '#475569' : '#94A3B8';
         }
+
+        // Dispatch a custom event for any page-specific charts to refresh
+        window.dispatchEvent(new CustomEvent('themeChanged', { detail: { theme: isLight ? 'light' : 'dark' } }));
     }
 
     // Initialize from storage or default to dark
     const savedTheme = localStorage.getItem('skysense_theme') || 'dark';
     applyTheme(savedTheme);
 
+    let lastToggleTime = 0;
     function toggleTheme() {
+        const now = Date.now();
+        if (now - lastToggleTime < 150) return; // Prevent double-trigger debounce
+        lastToggleTime = now;
+
         const currentTheme = htmlElement.classList.contains('light') ? 'light' : 'dark';
         const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
         applyTheme(nextTheme);
     }
 
-    // Expose globally for inline button handlers
+    // Expose globally for inline button handlers or external calls
     window.toggleSkySenseTheme = toggleTheme;
 
     if (themeToggleBtn) {

@@ -144,62 +144,100 @@ main {
     background: #475569;
 }
 
-/* Light Theme Overrides */
+/* =====================================================================
+   Light Theme System Overrides & Harmonization
+   ===================================================================== */
 html.light body {
     background-color: #F8FAFC !important;
     color: #0F172A !important;
 }
 
+/* Base Surfaces & Glassmorphism */
 html.light .glass-panel {
-    background: rgba(255, 255, 255, 0.88) !important;
+    background: rgba(255, 255, 255, 0.92) !important;
     border-color: #E2E8F0 !important;
-    box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
+    box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.02) !important;
 }
 
 html.light nav.glass-panel {
-    background: rgba(255, 255, 255, 0.95) !important;
-    border-bottom-color: #E2E8F0 !important;
+    background: rgba(255, 255, 255, 0.96) !important;
+    border-bottom: 1px solid #E2E8F0 !important;
+    box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.04) !important;
 }
 
-html.light .bg-slate-950 {
-    background-color: #F1F5F9 !important;
+html.light footer {
+    background-color: #F8FAFC !important;
+    border-top: 1px solid #E2E8F0 !important;
 }
 
-html.light .bg-slate-900 {
+/* Surface Background Color Harmonization */
+html.light .bg-slate-900,
+html.light .bg-slate-900\/95,
+html.light .bg-slate-900\/90,
+html.light .bg-slate-900\/80,
+html.light .bg-slate-900\/70,
+html.light .bg-slate-900\/60,
+html.light .bg-slate-900\/50,
+html.light .bg-slate-900\/40 {
     background-color: #FFFFFF !important;
 }
 
-html.light .bg-slate-900\/90,
-html.light .bg-slate-900\/80,
-html.light .bg-slate-900\/60,
-html.light .bg-slate-900\/40 {
-    background-color: rgba(255, 255, 255, 0.95) !important;
-}
-
+html.light .bg-slate-950,
+html.light .bg-slate-950\/95,
+html.light .bg-slate-950\/90,
 html.light .bg-slate-950\/80,
+html.light .bg-slate-950\/70,
 html.light .bg-slate-950\/60,
 html.light .bg-slate-950\/50,
 html.light .bg-slate-950\/40 {
     background-color: #F8FAFC !important;
 }
 
-html.light .bg-slate-800 {
-    background-color: #E2E8F0 !important;
-}
-
-html.light .bg-slate-800\/60,
-html.light .bg-slate-800\/80 {
+html.light .bg-slate-850 {
     background-color: #F1F5F9 !important;
 }
 
+html.light .bg-slate-800,
+html.light .bg-slate-800\/90,
+html.light .bg-slate-800\/80,
+html.light .bg-slate-800\/60,
+html.light .bg-slate-800\/50,
+html.light .bg-slate-800\/40 {
+    background-color: #F1F5F9 !important;
+}
+
+html.light .hover\:bg-slate-800:hover,
+html.light .hover\:bg-slate-800\/50:hover,
+html.light .hover\:bg-slate-800\/80:hover {
+    background-color: #E2E8F0 !important;
+}
+
+/* Borders Harmonization */
 html.light .border-slate-800,
 html.light .border-slate-700,
+html.light .border-slate-850,
+html.light .border-slate-900,
 html.light .border-slate-800\/80,
-html.light .border-slate-700\/80 {
+html.light .border-slate-700\/80,
+html.light .border-slate-800\/60,
+html.light .border-slate-700\/60,
+html.light .border-slate-800\/50,
+html.light .border-slate-700\/50,
+html.light .divide-slate-800\/80 > :not([hidden]) ~ :not([hidden]) {
     border-color: #E2E8F0 !important;
 }
 
-html.light .text-white {
+/* Typography Hierarchy in Light Mode */
+html.light h1.text-white,
+html.light h2.text-white,
+html.light h3.text-white,
+html.light h4.text-white,
+html.light h5.text-white,
+html.light h6.text-white,
+html.light p.text-white,
+html.light label.text-white,
+html.light span.text-white:not([class*="bg-"]):not([class*="from-"]),
+html.light div.text-white:not([class*="bg-"]):not([class*="from-"]):not([class*="rounded-2xl"]):not([class*="rounded-xl"]) {
     color: #0F172A !important;
 }
 
@@ -220,12 +258,218 @@ html.light .text-slate-500 {
     color: #94A3B8 !important;
 }
 
-html.light table tbody tr:hover {
+/* High-Contrast Accessible Accents in Light Mode */
+html.light .text-sky-300:not(button):not([class*="from-"]):not([class*="bg-"]):not([class*="btn"]),
+html.light .text-sky-400:not(button):not([class*="from-"]):not([class*="bg-"]):not([class*="btn"]) {
+    color: #0284C7 !important;
+}
+
+html.light .text-emerald-300:not(button):not([class*="from-"]):not([class*="bg-"]):not([class*="btn"]),
+html.light .text-emerald-400:not(button):not([class*="from-"]):not([class*="bg-"]):not([class*="btn"]) {
+    color: #059669 !important;
+}
+
+html.light .text-amber-300:not(button):not([class*="from-"]):not([class*="bg-"]):not([class*="btn"]),
+html.light .text-amber-400:not(button):not([class*="from-"]):not([class*="bg-"]):not([class*="btn"]) {
+    color: #D97706 !important;
+}
+
+html.light .text-rose-300:not(button):not([class*="from-"]):not([class*="bg-"]):not([class*="btn"]),
+html.light .text-rose-400:not(button):not([class*="from-"]):not([class*="bg-"]):not([class*="btn"]) {
+    color: #E11D48 !important;
+}
+
+html.light .text-indigo-300:not(button):not([class*="from-"]):not([class*="bg-"]):not([class*="btn"]),
+html.light .text-indigo-400:not(button):not([class*="from-"]):not([class*="bg-"]):not([class*="btn"]) {
+    color: #4F46E5 !important;
+}
+
+/* Light Theme Badges & Soft Highlight Pills */
+html.light .bg-sky-500\/10,
+html.light .bg-sky-500\/15,
+html.light .bg-sky-500\/20 {
+    background-color: #F0F9FF !important;
+    border-color: #BAE6FD !important;
+}
+
+html.light .bg-emerald-500\/10,
+html.light .bg-emerald-500\/15,
+html.light .bg-emerald-500\/20 {
+    background-color: #ECFDF5 !important;
+    border-color: #A7F3D0 !important;
+}
+
+html.light .bg-amber-500\/10,
+html.light .bg-amber-500\/15,
+html.light .bg-amber-500\/20 {
+    background-color: #FFFBEB !important;
+    border-color: #FDE68A !important;
+}
+
+html.light .bg-rose-500\/10,
+html.light .bg-rose-500\/15,
+html.light .bg-rose-500\/20 {
+    background-color: #FFF1F2 !important;
+    border-color: #FECDD3 !important;
+}
+
+/* CRITICAL: Ensure Solid Primary/Gradient Buttons and Links Retain Crisp White Text */
+html.light button[class*="bg-gradient-"],
+html.light button[class*="from-sky-"],
+html.light button.bg-sky-500:not([class*="/"]),
+html.light button.bg-sky-600:not([class*="/"]),
+html.light button.bg-indigo-600,
+html.light button.bg-rose-600,
+html.light button.bg-emerald-600,
+html.light a[class*="bg-gradient-"],
+html.light a[class*="from-sky-"],
+html.light a.bg-sky-500:not([class*="/"]),
+html.light a.bg-sky-600:not([class*="/"]),
+html.light a.bg-indigo-600,
+html.light a.bg-rose-600,
+html.light a.bg-emerald-600,
+html.light .btn-primary {
+    color: #FFFFFF !important;
+}
+
+html.light button[class*="bg-gradient-"] *,
+html.light button[class*="from-sky-"] *,
+html.light a[class*="bg-gradient-"] *,
+html.light a[class*="from-sky-"] * {
+    color: #FFFFFF !important;
+    stroke: currentColor !important;
+}
+
+/* Accessible Styling for Ghost / Outline Badges and Live Demo Pills in Light Mode */
+html.light a:is([class*="bg-sky-500/"], [class*="bg-sky-400/"]),
+html.light button:is([class*="bg-sky-500/"], [class*="bg-sky-400/"]) {
+    color: #0284C7 !important;
+    background-color: #F0F9FF !important;
+    border-color: #BAE6FD !important;
+}
+
+html.light a:is([class*="bg-sky-500/"], [class*="bg-sky-400/"]) *,
+html.light button:is([class*="bg-sky-500/"], [class*="bg-sky-400/"]) * {
+    color: #0284C7 !important;
+}
+
+html.light a:is([class*="bg-sky-500/"], [class*="bg-sky-400/"]):hover,
+html.light button:is([class*="bg-sky-500/"], [class*="bg-sky-400/"]):hover {
+    color: #0369A1 !important;
+    background-color: #E0F2FE !important;
+    border-color: #38BDF8 !important;
+}
+
+/* Form Inputs, Selects & Textareas in Light Mode */
+html.light input[type="text"],
+html.light input[type="password"],
+html.light input[type="email"],
+html.light input[type="file"],
+html.light input[type="date"],
+html.light select,
+html.light textarea {
+    background-color: #FFFFFF !important;
+    border-color: #CBD5E1 !important;
+    color: #0F172A !important;
+}
+
+html.light input::placeholder,
+html.light textarea::placeholder {
+    color: #94A3B8 !important;
+}
+
+html.light input:focus,
+html.light select:focus,
+html.light textarea:focus {
+    border-color: #0EA5E9 !important;
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15) !important;
+}
+
+/* Interactive Dropzone */
+html.light #upload-dropzone {
+    background-color: #F8FAFC !important;
+    border-color: #CBD5E1 !important;
+}
+
+html.light #upload-dropzone:hover {
+    background-color: #F0F9FF !important;
+    border-color: #0EA5E9 !important;
+}
+
+/* Tables in Light Mode */
+html.light thead {
+    background-color: #F8FAFC !important;
+    border-bottom: 1px solid #E2E8F0 !important;
+}
+
+html.light thead th {
+    color: #475569 !important;
+}
+
+html.light tbody tr {
+    border-color: #F1F5F9 !important;
+}
+
+html.light tbody tr:hover {
     background-color: #F8FAFC !important;
 }
 
-html.light thead.bg-slate-950 {
+/* Theme Toggle Button in Light Mode */
+html.light #theme-toggle-btn,
+html.light #mobile-theme-toggle-btn {
+    color: #475569 !important;
+    background-color: #F8FAFC !important;
+    border-color: #CBD5E1 !important;
+}
+
+html.light #theme-toggle-btn:hover,
+html.light #mobile-theme-toggle-btn:hover {
+    color: #0284C7 !important;
     background-color: #F1F5F9 !important;
+    border-color: #94A3B8 !important;
+}
+
+/* Mobile Dropdown Menu in Light Mode */
+html.light #mobile-menu {
+    background-color: #FFFFFF !important;
+    border-color: #E2E8F0 !important;
+    box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08) !important;
+}
+
+html.light #mobile-menu .border-slate-800 {
+    border-color: #E2E8F0 !important;
+}
+
+html.light #mobile-menu a {
+    color: #334155 !important;
+}
+
+html.light #mobile-menu a:hover {
+    background-color: #F1F5F9 !important;
+    color: #0284C7 !important;
+}
+
+/* Projector Mode in Light Mode */
+html.light .projector-mode .glass-panel {
+    background: #FFFFFF !important;
+    border-color: #94A3B8 !important;
+    box-shadow: 0 8px 30px -4px rgba(15, 23, 42, 0.12) !important;
+}
+
+/* Fullscreen Inference Overlay in Light Mode */
+html.light #inference-loading-overlay {
+    background-color: rgba(15, 23, 42, 0.6) !important;
+}
+
+html.light #inference-loading-overlay .glass-panel {
+    background-color: #FFFFFF !important;
+    border-color: #E2E8F0 !important;
+}
+
+/* Thumbnails Specimen Badges in Light Mode */
+html.light .specimen-card span,
+html.light [class*="absolute"] span[class*="uppercase"] {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
 }
 
 /* High Contrast Projector Mode */

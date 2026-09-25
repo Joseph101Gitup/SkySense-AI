@@ -7,7 +7,10 @@
 
 ---
 
-d:\personal\SkySense_AI\03_AI_Model\.venv\Scripts\python.exe manage.py runserver 127.0.0.1:8000
+**Command to run the server:**
+
+**d:\personal\SkySense_AI\03_AI_Model\.venv\Scripts\python.exe 05_Backend\manage.py runserver 127.0.0.1:8000**
+
 
 ## 1. Pre-Flight Setup & Environment Checklist
 

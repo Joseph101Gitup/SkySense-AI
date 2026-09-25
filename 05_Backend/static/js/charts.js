@@ -283,3 +283,41 @@ function renderProbabilityBarChart(canvasId, lowProb, medProb, noProb) {
         }
     });
 }
+
+// Dynamically refresh chart styling when user flips theme
+window.addEventListener('themeChanged', (e) => {
+    if (!window.Chart) return;
+    const isLight = e.detail && e.detail.theme === 'light';
+    const textColor = isLight ? '#475569' : '#94A3B8';
+    const gridColor = isLight ? 'rgba(203, 213, 225, 0.6)' : 'rgba(51, 65, 85, 0.2)';
+
+    Chart.defaults.color = textColor;
+
+    // Refresh all active Chart.js instances on page
+    if (Chart.instances) {
+        Object.values(Chart.instances).forEach(chart => {
+            if (chart.options && chart.options.scales) {
+                Object.values(chart.options.scales).forEach(scale => {
+                    if (scale.grid && scale.grid.display !== false) {
+                        scale.grid.color = gridColor;
+                    }
+                    if (scale.ticks) {
+                        scale.ticks.color = textColor;
+                    }
+                });
+            }
+            if (chart.options && chart.options.plugins) {
+                if (chart.options.plugins.tooltip) {
+                    chart.options.plugins.tooltip.backgroundColor = isLight ? '#FFFFFF' : '#0F172A';
+                    chart.options.plugins.tooltip.borderColor = isLight ? '#CBD5E1' : '#334155';
+                    chart.options.plugins.tooltip.titleColor = isLight ? '#0F172A' : '#F8FAFC';
+                    chart.options.plugins.tooltip.bodyColor = isLight ? '#334155' : '#CBD5E1';
+                }
+                if (chart.options.plugins.legend && chart.options.plugins.legend.labels) {
+                    chart.options.plugins.legend.labels.color = isLight ? '#334155' : '#CBD5E1';
+                }
+            }
+            chart.update();
+        });
+    }
+});
